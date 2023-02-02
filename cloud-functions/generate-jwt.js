@@ -28,7 +28,15 @@ export async function generateJwt(req, res) {
     process.env.JWT_KEY
   );
 
-  res.send(token);
+  res.send({
+    token: token,
+    user: {
+      id: userinfo.id,
+      display_name: userinfo.display_name,
+      profile_image: userinfo.image,
+      url: userinfo.url,
+    },
+  });
 }
 
 async function spotifyUserInfo(access_token) {
