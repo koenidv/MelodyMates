@@ -5,16 +5,16 @@
 import jwt from "jsonwebtoken";
 
 export async function generateJwt(req, res) {
-  const { access_token } = req.body;
+  const { spotify_token } = req.body;
 
-  if (!access_token) {
-    res.status(400).send("Missing access token");
+  if (!spotify_token) {
+    res.status(500).send("Missing Spotify token");
     return;
   }
 
-  const userinfo = await spotifyUserInfo(access_token);
+  const userinfo = await spotifyUserInfo(spotify_token);
 
-  if (!userinfo.id) {
+  if (!userinfo) {
     res.status(500).send("Failed to get Spotify user info");
     return;
   }
@@ -22,7 +22,7 @@ export async function generateJwt(req, res) {
   const token = jwt.sign(
     {
       sub: userinfo.id,
-      iat: Date.now() / 1000,
+      iat: Math.floor(Date.now() / 1000),
       iss: "MusicMates",
     },
     process.env.JWT_KEY
@@ -39,8 +39,10 @@ async function spotifyUserInfo(access_token) {
   });
   const json = await res.json();
 
+  if (json.error) return null;
+
   let image = null;
-  if (json.images.length > 0) {
+  if (json.images && json.images.length > 0) {
     image = json.images[0].url;
   }
 
