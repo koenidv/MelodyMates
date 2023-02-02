@@ -30,7 +30,7 @@ jobs:
 
       - id: "auth"
         name: "Authenticate to Google Cloud"
-        uses: "google-github-actions/auth@v0"
+        uses: "google-github-actions/auth@v1"
         with:
           # Replace with your Workload Identity Provider Location
           workload_identity_provider: "projects/60138070601/locations/global/workloadIdentityPools/gh-pool/providers/gh-provider"
@@ -38,7 +38,7 @@ jobs:
           service_account: "github-actions-service-account@melodymates.iam.gserviceaccount.com"
 
       - id: "deploy"
-        uses: "google-github-actions/deploy-cloud-functions@v0"
+        uses: "google-github-actions/deploy-cloud-functions@v1"
         with:
           # Name of the Cloud Function, same as the entry point name
           name: "generate-jwt"
