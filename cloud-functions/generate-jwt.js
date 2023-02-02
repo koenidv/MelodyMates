@@ -2,10 +2,15 @@
  * Request user info based on an access token and generate a JWT
  */
 
-var jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
 
 export async function generateJwt(req, res) {
   const { access_token } = req.body;
+
+  if (!access_token) {
+    res.status(400).send("Missing access token");
+    return;
+  }
 
   const userinfo = await spotifyUserInfo(access_token);
 
@@ -14,11 +19,14 @@ export async function generateJwt(req, res) {
     return;
   }
 
-  const token = jwt.sign({
-    "sub": userinfo.id,
-    "iat":  Date.now() / 1000,
-    "iss": "MusicMates",
-  }, process.env.JWT_KEY)
+  const token = jwt.sign(
+    {
+      sub: userinfo.id,
+      iat: Date.now() / 1000,
+      iss: "MusicMates",
+    },
+    process.env.JWT_KEY
+  );
 
   res.send(token);
 }
