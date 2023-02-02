@@ -1,12 +1,9 @@
-const selfUrl =
-  "https://europe-west1-melodymates.cloudfunctions.net/generate-jwt";
-
 /**
- * Responds to any HTTP request.
- *
- * @param {!express:Request} req HTTP request context.
- * @param {!express:Response} res HTTP response context.
+ * Request user info based on an access token and generate a JWT
  */
+
+var jwt = require("jsonwebtoken");
+
 export async function generateJwt(req, res) {
   const { access_token } = req.body;
 
@@ -17,7 +14,13 @@ export async function generateJwt(req, res) {
     return;
   }
 
-  res.send(JSON.stringify(userinfo));
+  const token = jwt.sign({
+    "sub": userinfo.id,
+    "iat":  Date.now() / 1000,
+    "iss": "MusicMates",
+  }, process.env.JWT_KEY)
+
+  res.send(token);
 }
 
 async function spotifyUserInfo(access_token) {
