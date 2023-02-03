@@ -1,6 +1,10 @@
 {
     "name": "musicmates",
     "version": "1",
-    "type": "module"
+    "type": "module",
+    "dependencies": {
+      "jsonwebtoken": "^9.0.0",
+      "faunadb": "^4.7.1"
+    }
   }
   

@@ -3,6 +3,7 @@
  */
 
 import jwt from "jsonwebtoken";
+import faunadb from "faunadb";
 
 export async function generateJwt(req, res) {
   const { spotify_token } = req.body;
@@ -28,6 +29,8 @@ export async function generateJwt(req, res) {
     process.env.JWT_KEY
   );
 
+  const userExists = await userExists(userinfo.id);
+
   res.send({
     token: token,
     user: {
@@ -36,6 +39,7 @@ export async function generateJwt(req, res) {
       profile_image: userinfo.image,
       url: userinfo.url,
     },
+    justCreated: !userExists,
   });
 }
 
@@ -60,4 +64,19 @@ async function spotifyUserInfo(access_token) {
     image: image,
     url: json.external_urls.spotify,
   };
+}
+
+function getFaunaClient() {
+  return new faunadb.Client({
+    secret: process.env.FAUNA_SECRET,
+    endpoint: "https://db.fauna.com",
+    keepAlive: false,
+  });
+}
+
+async function userExists(id) {
+  const queried = await getFaunaClient().query(
+    q.Exists(q.Match(q.Index("unique_User_id"), id))
+  );
+  return queried;
 }
