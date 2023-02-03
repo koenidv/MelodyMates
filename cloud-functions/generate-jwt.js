@@ -3,8 +3,6 @@
  */
 
 import jwt from 'jsonwebtoken';
-import faunadb from 'faunadb';
-const q = faunadb.query;
 
 export async function generateJwt(req, res) {
 	const { spotify_token } = req.body;
@@ -30,26 +28,24 @@ export async function generateJwt(req, res) {
 		return;
 	}
 
+	const secret = new Buffer.from(process.env.JWT_PRIVATE_KEY, 'base64').toString('utf-8');
 	const token = jwt.sign(
 		{
 			sub: userinfo.id,
 			iat: Math.floor(Date.now() / 1000),
-			iss: 'MusicMates',
+			iss: 'MelodyMates',
 			aud: ['https://db.fauna.com/db/yuzwxs58eyrpc'],
-			algorithm: 'RS256'
 		},
-		process.env.JWT_PRIVATE_KEY
+		secret,
+		{
+			algorithm: 'RS256',
+			keyid: "melodymates"
+		}
 	);
-
-	const existed = await userExists(userinfo.id);
-	if (!existed) {
-		await createUser(userinfo);
-	}
 
 	res.status(200).send({
 		token: token,
-		user: userinfo,
-		justCreated: !existed
+		user: userinfo
 	});
 }
 
@@ -74,30 +70,4 @@ async function spotifyUserInfo(access_token) {
 		profile_image: image,
 		url: json.external_urls.spotify
 	};
-}
-
-function getFaunaClient() {
-	return new faunadb.Client({
-		secret: process.env.FAUNA_SECRET,
-		endpoint: 'https://db.fauna.com',
-		keepAlive: false
-	});
-}
-
-async function userExists(id) {
-	const queried = await getFaunaClient().query(q.Exists(q.Match(q.Index('unique_User_id'), id)));
-	return queried;
-}
-
-async function createUser(userinfo) {
-	await getFaunaClient().query(
-		q.Create(q.Collection('User'), {
-			data: {
-				id: userinfo.id,
-				profile_name: userinfo.display_name,
-				profile_image: userinfo.profile_image,
-				spotify_url: userinfo.url
-			}
-		})
-	);
 }

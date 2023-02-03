@@ -39,6 +39,8 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"buffer": "^6.0.3"
+		"buffer": "^6.0.3",
+		"faunadb": "^4.7.1",
+		"jsonwebtoken": "^9.0.0"
 	}
 }

@@ -1,4 +1,6 @@
 import { Buffer as buf } from "buffer";
+import faunadb from "faunadb";
+const q = faunadb.query;
 
 /**
  * SPOTIFY OAUTH
@@ -61,4 +63,24 @@ export async function generateJWT(access_token: string) {
   });
   const json = await res.json();
   return json;
+}
+
+export async function userExists(id: string, fauna: faunadb.Client) {
+  const queried = await fauna.query(
+    q.Exists(q.Match(q.Index("unique_User_id"), id)),
+  );
+  return queried;
+}
+
+export async function createUser(userinfo: any, fauna: faunadb.Client) {
+  await fauna.query(
+    q.Create(q.Collection("User"), {
+      data: {
+        id: userinfo.id,
+        profile_name: userinfo.display_name,
+        profile_image: userinfo.profile_image,
+        spotify_url: userinfo.url,
+      },
+    }),
+  );
 }
