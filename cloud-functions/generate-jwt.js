@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Request user info based on an access token and generate a JWT
  */
@@ -9,6 +8,15 @@ const q = faunadb.query;
 
 export async function generateJwt(req, res) {
   const { spotify_token } = req.body;
+  res.set('Access-Control-Allow-Origin', "*")
+
+  if (req.method === "OPTIONS") {
+    res.set('Access-Control-Allow-Methods', 'GET, POST');
+    res.set('Access-Control-Allow-Headers', 'Content-Type');
+    res.set('Access-Control-Max-Age', '3600');
+    res.status(204).send('');
+    return;
+  }
 
   if (!spotify_token) {
     res.status(500).send("Missing Spotify token");
@@ -36,7 +44,7 @@ export async function generateJwt(req, res) {
     await createUser(userinfo);
   }
 
-  res.send({
+  res.status(200).send({
     token: token,
     user: userinfo,
     justCreated: !existed,
