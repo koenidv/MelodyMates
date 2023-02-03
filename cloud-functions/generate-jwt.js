@@ -4,6 +4,7 @@
 
 import jwt from "jsonwebtoken";
 import faunadb from "faunadb";
+const q = faunadb.query;
 
 export async function generateJwt(req, res) {
   const { spotify_token } = req.body;
@@ -29,17 +30,15 @@ export async function generateJwt(req, res) {
     process.env.JWT_KEY
   );
 
-  const userExists = await userExists(userinfo.id);
+  const existed = await userExists(userinfo.id);
+  if (!existed) {
+    await createUser(userinfo);
+  }
 
   res.send({
     token: token,
-    user: {
-      id: userinfo.id,
-      display_name: userinfo.display_name,
-      profile_image: userinfo.image,
-      url: userinfo.url,
-    },
-    justCreated: !userExists,
+    user: userinfo,
+    justCreated: !existed,
   });
 }
 
