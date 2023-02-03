@@ -2,10 +2,9 @@
 	import { page } from '$app/stores';
 	import { generateJWT, spotifyOAuth } from '$lib/auth';
 	import { onMount } from 'svelte';
+    import { SyncLoader } from "svelte-loading-spinners"
 
 	const code = $page.url.searchParams.get('code');
-	let userdata: any;
-    let justcreated: boolean;
 
     onMount(async () => {
         if (code) {
@@ -16,19 +15,21 @@
 
             const jwtData = await generateJWT(access_token);
             const jwt = jwtData.token;
-            userdata = jwtData.user;
-            justcreated = jwtData.justcreated;
+            const userdata = jwtData.user;
 
+            if (jwtData.justcreated) {
+                window.location.replace("/setup")
+            } else {
+                window.location.replace("/home")
+            }
+        } else {
+            window.location.replace("/login")
         }
     });
 </script>
 
-{#if !userdata}
-	<p class="text-xl">Loading...</p>
-{:else}
-	<p class="text-xl">Success.</p>
-	<p>
-		Welcome { !justcreated ? "back " : "" }{userdata.display_name}!
-	</p>
-    <img src={userdata.profile_image} alt={userdata.display_name} />
-{/if}
+<div class="flex h-screen w-screen items-center justify-center p-8">
+
+    <SyncLoader color="#ffffff" />
+
+</div>
