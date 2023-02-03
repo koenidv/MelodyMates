@@ -13,7 +13,7 @@
 			const access_token = oauth.access_token;
 			const expires_in = Math.floor(Date.now() / 1000) + oauth.expires_in;
 			const refresh_token = oauth.refresh_token;
-
+            
 			const jwtData = await generateJWT(access_token);
 			const jwt = jwtData.token;
 			const userdata = jwtData.user;

@@ -23,6 +23,7 @@ export const OAUTH_URL =
   }&scope=${encodeURIComponent(SPOTIFY_SCOPES.join(" "))}`;
 
 export async function spotifyOAuth(code: string) {
+  console.time("Spotify OAuth access token");
   const spotify_secret = import.meta.env.VITE_SPOTIFY_SECRET;
   const res = await fetch("https://accounts.spotify.com/api/token", {
     method: "post",
@@ -41,6 +42,7 @@ export async function spotifyOAuth(code: string) {
     }),
   });
   const json = await res.json();
+  console.timeEnd("Spotify OAuth access token");
   return json;
 }
 
@@ -52,6 +54,7 @@ const jwtEndpoint =
   "https://europe-west1-melodymates.cloudfunctions.net/generate-jwt";
 
 export async function generateJWT(access_token: string) {
+  console.time("Generate JWT Request");
   const res = await fetch(jwtEndpoint, {
     method: "post",
     headers: {
@@ -62,17 +65,23 @@ export async function generateJWT(access_token: string) {
     }),
   });
   const json = await res.json();
+  console.timeEnd("Generate JWT Request");
   return json;
 }
 
 export async function userExists(id: string, fauna: faunadb.Client) {
+  console.time("User Exists Query");
+
   const queried = await fauna.query(
     q.Exists(q.Match(q.Index("unique_User_id"), id)),
   );
+  console.timeEnd("User Exists Query");
+
   return queried;
 }
 
 export async function createUser(userinfo: any, fauna: faunadb.Client) {
+  console.time("Create User Query");
   await fauna.query(
     q.Create(q.Collection("User"), {
       data: {
@@ -83,4 +92,5 @@ export async function createUser(userinfo: any, fauna: faunadb.Client) {
       },
     }),
   );
+  console.timeEnd("Create User Query");
 }
