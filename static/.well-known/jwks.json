@@ -1,0 +1,7 @@
+{
+	"kty": "RSA",
+	"n": "ngwfiyqOS5d2CHQ_nXruMDBY73nlywIfvezp-wuXbHSjrZqjlf2TmCPrOsHiL_DezKbemm62ZfRnQ6NNLu-d9w",
+	"e": "AQAB",
+	"alg": "RS256",
+	"use": "sig"
+  }
