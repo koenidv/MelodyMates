@@ -40,11 +40,10 @@ jobs:
       - id: "deploy"
         uses: "google-github-actions/deploy-cloud-functions@v1"
         with:
-          # Name of the Cloud Function, same as the entry point name
           name: "generate-jwt"
-          # Runtime to use for the function
           runtime: "nodejs18"
-          entry_point: "spotifyCallback"
+          source_dir: "cloud-functions"
+          entry_point: "generateJwt"
           memory_mb: 128
           region: "europe-west1"
           timeout: 15
