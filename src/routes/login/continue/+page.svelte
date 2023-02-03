@@ -1,0 +1,11 @@
+<script lang="ts">
+    import { page } from "$app/stores";
+    const code = $page.url.searchParams.get("code");
+</script>
+
+<p class="text-xl">
+    Success.
+</p>
+<p>
+    Code is {code}.
+</p>
