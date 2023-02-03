@@ -1,25 +1,34 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { spotifyOAuth } from '$lib/auth';
+	import { generateJWT, spotifyOAuth } from '$lib/auth';
 	import { onMount } from 'svelte';
 
 	const code = $page.url.searchParams.get('code');
-	let access_token: string;
+	let userdata: any;
+    let justcreated: boolean;
 
-    onMount(() => {
+    onMount(async () => {
         if (code) {
-            spotifyOAuth(code).then((token) => {
-                access_token = token;
-            });
+            const oauth = await spotifyOAuth(code)
+            const access_token = oauth.access_token;
+            const expires_in = Math.floor(Date.now() / 1000) + oauth.expires_in;
+            const refresh_token = oauth.refresh_token;
+
+            const jwtData = await generateJWT(access_token);
+            const jwt = jwtData.token;
+            userdata = jwtData.user;
+            justcreated = jwtData.justcreated;
+
         }
     });
 </script>
 
-{#if !access_token}
+{#if !userdata}
 	<p class="text-xl">Loading...</p>
 {:else}
 	<p class="text-xl">Success.</p>
 	<p>
-		Access token is {JSON.stringify(access_token)}.
+		Welcome { !justcreated ? "back " : "" }{userdata.display_name}!
 	</p>
+    <img src={userdata.profile_image} alt={userdata.display_name} />
 {/if}

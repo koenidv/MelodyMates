@@ -1,5 +1,9 @@
 import { Buffer as buf } from "buffer";
 
+/**
+ * SPOTIFY OAUTH
+ */
+
 const SPOTIFY_SCOPES = [
   "user-read-currently-playing",
   "user-read-playback-position",
@@ -32,6 +36,27 @@ export async function spotifyOAuth(code: string) {
       refresh_token: code,
       redirect_uri: SPOTIFY_OAUTH_REDIRECT,
       grant_type: "authorization_code",
+    }),
+  });
+  const json = await res.json();
+  return json;
+}
+
+/**
+ * MELODYMATES IDENTITY
+ */
+
+const jwtEndpoint =
+  "https://europe-west1-melodymates.cloudfunctions.net/generate-jwt";
+
+export async function generateJWT(access_token: string) {
+  const res = await fetch(jwtEndpoint, {
+    method: "post",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      "spotify_token": access_token,
     }),
   });
   const json = await res.json();
