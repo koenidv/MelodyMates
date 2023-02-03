@@ -60,7 +60,7 @@ async function spotifyUserInfo(access_token) {
   return {
     id: json.id,
     display_name: json.display_name,
-    image: image,
+    profile_image: image,
     url: json.external_urls.spotify,
   };
 }
@@ -78,4 +78,17 @@ async function userExists(id) {
     q.Exists(q.Match(q.Index("unique_User_id"), id))
   );
   return queried;
+}
+
+async function createUser(userinfo) {
+  await getFaunaClient().query(
+    q.Create(q.Collection("User"), {
+      data: {
+        id: userinfo.id,
+        profile_name: userinfo.display_name,
+        profile_image: userinfo.profile_image,
+        spotify_url: userinfo.url,
+      },
+    })
+  );
 }
