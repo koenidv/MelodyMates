@@ -9,7 +9,7 @@
 </svelte:head>
 
 <section>
-	<a href="/">Go to login</a>
+	<a href="/login">Go to login</a>
 	<h1>
 		<span class="welcome">
 			<picture>
