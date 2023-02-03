@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Request user info based on an access token and generate a JWT
  */
