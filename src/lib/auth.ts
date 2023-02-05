@@ -52,8 +52,10 @@ export async function spotifyOAuth(code: string) {
 }
 
 export async function refreshSpotifyToken() {
-  if (get(identity)?.spotify?.expires < Date.now()) {
+  const expires = get(identity)?.spotify?.expires || 0;
+  if (expires < Date.now()) {
     const copy = get(identity);
+    if (!copy.spotify) return;
 
     const spotify_secret = import.meta.env.VITE_SPOTIFY_SECRET;
     const res = await fetch("https://accounts.spotify.com/api/token", {
