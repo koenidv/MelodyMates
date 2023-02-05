@@ -11,7 +11,7 @@
 		if (code) {
 			const oauth = await spotifyOAuth(code);
 			const access_token = oauth.access_token;
-			const expires_in = Math.floor(Date.now() / 1000) + oauth.expires_in;
+			const expires: number = Math.floor(Date.now() / 1000) + oauth.expires_in;
 			const refresh_token = oauth.refresh_token;
             
 			const jwtData = await generateJWT(access_token);
@@ -21,11 +21,11 @@
 			const fauna = new faunadb.Client({ secret: jwt });
 
 			if (await userExists(userdata.id, fauna)) {
-				saveIdentity(jwt, userdata)
+				saveIdentity(jwt, {access_token, expires, refresh_token}, userdata)
 				window.location.replace('/home');
 			} else {
 				await createUser(userdata, fauna);
-				saveIdentity(jwt, userdata)
+				saveIdentity(jwt, {access_token, expires, refresh_token}, userdata)
 				window.location.replace('/setup');
 			}
 
