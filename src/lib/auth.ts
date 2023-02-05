@@ -1,7 +1,8 @@
 import { Buffer as buf } from "buffer";
 import faunadb from "faunadb";
 import { dev } from "$app/environment";
-import { identity } from "$lib/store";
+import { identity, type OAuthed } from "$lib/store";
+import { get } from "svelte/store";
 const q = faunadb.query;
 
 /**
@@ -50,6 +51,34 @@ export async function spotifyOAuth(code: string) {
   return json;
 }
 
+export async function refreshSpotifyToken() {
+  if (get(identity)?.spotify?.expires < Date.now()) {
+    const copy = get(identity);
+
+    const spotify_secret = import.meta.env.VITE_SPOTIFY_SECRET;
+    const res = await fetch("https://accounts.spotify.com/api/token", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: "Basic " +
+          buf.from(SPOTIFY_CLIENT_ID + ":" + spotify_secret).toString(
+            "base64",
+          ),
+      },
+      body: new URLSearchParams({
+        code: copy.spotify.refresh_token,
+        refresh_token: copy.spotify.refresh_token,
+        redirect_uri: SPOTIFY_OAUTH_REDIRECT,
+        grant_type: "refresh_token",
+      }),
+    });
+    const json = await res.json();
+    copy.spotify.access_token = json.access_token;
+    copy.spotify.expires = Date.now() + json.expires_in * 1000;
+    identity.set(copy);
+  }
+}
+
 /**
  * MELODYMATES IDENTITY
  */
@@ -73,9 +102,10 @@ export async function generateJWT(access_token: string) {
   return json;
 }
 
-export function saveIdentity(jwt: string, user: any) {
+export function saveIdentity(jwt: string, spotify: OAuthed, user: any) {
   identity.set({
     jwt: jwt,
+    spotify: spotify,
     user: user,
   });
 }

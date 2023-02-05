@@ -1,4 +1,6 @@
-import { currentlyPlaying } from "./store";
+import { get } from "svelte/store";
+import { refreshSpotifyToken } from "$lib/auth";
+import { currentlyPlaying, identity } from "$lib/store";
 
 let intervalId: NodeJS.Timer | undefined = undefined;
 
@@ -9,11 +11,19 @@ export function startNowPlayingObserver() {
 }
 
 export async function queryCurrentSong() {
+  if (!get(identity)?.spotify?.access_token) return;
+  await refreshSpotifyToken();
+
   const res = await fetch(
     "https://api.spotify.com/v1/me/player/currently-playing",
+    {
+      headers: {
+        Authorization: "Bearer " + get(identity).spotify.access_token,
+      },
+    },
   );
   const json = await res.json();
-  console.log(JSON.stringify(json, null, 2));
+
   currentlyPlaying.set({
     song: {
       id: json.item.id,
@@ -40,7 +50,9 @@ export async function queryCurrentSong() {
   });
 }
 
-export function queryLastSong() {
+export async function queryLastSong() {
+  if (!get(identity)?.spotify?.access_token) return;
+  await refreshSpotifyToken();
   fetch("https://api.spotify.com/v1/me/player/recently-played?limit=1").then(
     (res) => {
       res.json().then((data) => {
