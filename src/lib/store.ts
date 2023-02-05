@@ -43,4 +43,4 @@ type Album = {
 }
 
 export const identity = persisted("identity", {} as Identity);
-export const currentlyPlaying = writable({} as NowPlaying);
+export const currentlyPlaying = persisted("nowplaying", {} as NowPlaying);
