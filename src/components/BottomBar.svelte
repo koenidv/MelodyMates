@@ -5,8 +5,8 @@
 </script>
 
 <div
-	class="flex flex-row gap-8 justify-between items-center w-screen border-t-gray-700 border-t-2 p-2">
-	<div class="flex flex-row">
+	class="flex flex-row gap-8 justify-between items-center w-screen border-t-gray-700 border-t-2 p-2 flex-1 min-w-0">
+	<div class="flex flex-row shrink-0">
 		{#if $identity?.user?.profile_image}
 			<img src={$identity?.user?.profile_image} class="w-10 h-10 rounded-full ml-1" alt="Your account" />
 		{:else}
