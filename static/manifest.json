@@ -1,7 +1,7 @@
 {
   "short_name": "MelodyMates",
   "name": "MelodyMates",
-  "start_url": "/",
+  "start_url": "/home",
   "icons": [
     {
       "src": "/logo/manifest-icon-192.maskable.png",
