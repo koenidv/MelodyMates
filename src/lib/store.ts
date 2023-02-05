@@ -1,10 +1,13 @@
-import { writable } from 'svelte/store';
-import { persisted } from 'svelte-local-storage-store'
+import { writable } from "svelte/store";
+import { persisted } from "svelte-local-storage-store";
 
 type Identity = {
-    jwt: string;
-    user: any;
+  jwt: string | undefined;
+  spotify: OAuthed | undefined,
+  user: any | undefined;
+};
+
 }
 
-export const identity = persisted('identity', {} as Identity);
-export const currentlyPlaying = writable(null);
+
+export const identity = persisted("identity", {} as Identity);
