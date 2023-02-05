@@ -1,9 +1,28 @@
 <script lang="ts">
+	import { getSongColor } from "$lib/colors";
 	import { currentlyPlaying } from "$lib/store";
+	import { get } from "svelte/store";
+
+	let lastsongId: string | undefined = undefined;
+	let color: string | undefined = undefined;
+
+	function updateColor() {
+		if (!get(currentlyPlaying)?.song?.id) return;
+		if (lastsongId === get(currentlyPlaying).song.id) return;
+		color = undefined;
+
+		getSongColor(get(currentlyPlaying).song.album.cover_image).then((hex: string) => {
+			color = hex;
+		});
+		lastsongId = get(currentlyPlaying).song.id;
+	}
+
+	$: $currentlyPlaying, updateColor();
 </script>
 
 <button
-	class="bg-gray-700 rounded-xl p-3 disabled:bg-gray-900 disabled:text-gray-500 flex flex-row gap-2 grow justify-center items-center min-w-0">
+	class="bg-gray-700 rounded-xl p-3 disabled:bg-gray-900 disabled:text-gray-500 flex flex-row gap-2 grow justify-center items-center min-w-0 transition-colors duration-300"
+	style={color ? "background-color: " + color : ""}>
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
 		x="0px"
