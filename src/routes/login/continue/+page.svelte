@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { createUser, generateJWT, spotifyOAuth, userExists } from '$lib/auth';
+	import { createUser, generateJWT, saveIdentity, spotifyOAuth, userExists } from '$lib/auth';
 	import { onMount } from 'svelte';
 	import { SyncLoader } from 'svelte-loading-spinners';
 	import faunadb from 'faunadb';
@@ -21,9 +21,11 @@
 			const fauna = new faunadb.Client({ secret: jwt });
 
 			if (await userExists(userdata.id, fauna)) {
+				saveIdentity(jwt, userdata)
 				window.location.replace('/home');
 			} else {
 				await createUser(userdata, fauna);
+				saveIdentity(jwt, userdata)
 				window.location.replace('/setup');
 			}
 
