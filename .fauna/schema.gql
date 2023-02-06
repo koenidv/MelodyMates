@@ -1,0 +1,53 @@
+type User{
+	id: String! @unique
+	profile_name: String!
+	profile_image: String
+	spotify_url: String!
+	private: PrivateUserData!
+}
+
+type PrivateUserData{
+	profile_song: Song
+	follows: [Friends!]! @relation(
+	name: "follows_self"
+)
+	incoming_requests: [FollowRequest!]! @relation(
+	name: "incoming_request"
+)
+	phone_hash: String
+}
+
+type Friends{
+	self: User! @relation(
+	name: "follows_self"
+)
+	follows: User!
+}
+
+type FollowRequest{
+	from: User!
+	recipient: User! @relation(
+	name: "incoming_request"
+)
+}
+
+type Song{
+	id: String! @unique
+	name: String!
+	artist: String! // todo make type Artist
+	length_seconds: Int!
+	cover: String
+	theme_color: String
+}
+
+type Post{
+	song: Song!
+	author: User!
+	reactions: [React!]!
+}
+
+type React{
+	emoji: String!
+	post: Post!
+	author: User!
+}
