@@ -10,15 +10,14 @@ export async function startNowPlayingObserver() {
 }
 
 async function recursiveObserver() {
-  const playing = await queryCurrentSong();
-  if (timeoutId === null) return;
-  if (playing) {
+  try {
+    // todo Error in async currentsong function. Query last if failed .json() or .id not found
+    queryCurrentSong();
     timeoutId = setTimeout(async () => {
       recursiveObserver();
     }, 8_000);
-  } else {
-    await queryLastPlayed();
-    if (timeoutId === null) return;
+  } catch (err) {
+    queryLastPlayed();
     timeoutId = setTimeout(async () => {
       recursiveObserver();
     }, 16_000);
@@ -38,6 +37,8 @@ export async function queryCurrentSong() {
     },
   );
   const json = await res.json();
+
+  console.log(json);
 
   currentlyPlaying.set({
     song: {
@@ -70,7 +71,11 @@ export async function queryCurrentSong() {
 export async function queryLastPlayed() {
   if (!get(identity)?.spotify?.access_token) return;
   await refreshSpotifyToken();
-  fetch("https://api.spotify.com/v1/me/player/recently-played?limit=1").then(
+  fetch("https://api.spotify.com/v1/me/player/recently-played?limit=1", {
+    headers: {
+      Authorization: "Bearer " + get(identity)?.spotify?.access_token,
+    },
+  }).then(
     (res) => {
       res.json().then((data) => {
         console.log(data);
