@@ -3,24 +3,19 @@ type User {
 	profile_name: String!
 	profile_image: String
 	spotify_url: String!
-	private: PrivateUserData!
+	private: PrivateUserData! @relation(name: "user_private")
 }
 
 type PrivateUserData {
+	user: User! @relation(name: "user_private")
 	profile_song: Song
-	follows: [Friends!]! @relation(name: "follows_self")
-	outgoing_requests: [FollowRequest!]! @relation(name: "incoming_request")
+	follows: [User!]!
 	phone_hash: String
-}
-
-type Friends {
-	self: User! @relation(name: "follows_self")
-	follows: User!
 }
 
 type FollowRequest {
 	from: User!
-	recipient: User! @relation(name: "incoming_request")
+	recipient: User!
 }
 
 type Song {
@@ -32,12 +27,12 @@ type Song {
 }
 
 type Artist {
-	id: String!
+	id: String! @unique
 	name: String!
 }
 
 type Album {
-	id: String!
+	id: String! @unique
 	name: String!
 	artists: [Artist!]!
 	cover_image: String
