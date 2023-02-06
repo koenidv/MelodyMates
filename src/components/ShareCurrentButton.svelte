@@ -21,7 +21,7 @@
 </script>
 
 <button
-	class="h-10 bg-gray-700 rounded-xl p-3 disabled:bg-gray-900 disabled:text-gray-500 flex flex-row gap-2 grow justify-center items-center min-w-0 transition-colors duration-300"
+	class="h-12 bg-gray-700 rounded-xl p-3 disabled:bg-gray-900 disabled:text-gray-500 flex flex-row gap-2 grow justify-center items-center min-w-0 transition-colors duration-300"
 	style={color ? "background-color: " + color : ""}>
 	{#if $currentlyPlaying?.song?.name}
 		<svg
