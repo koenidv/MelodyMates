@@ -21,7 +21,7 @@
 </script>
 
 <button
-	class="h-12 bg-gray-700 rounded-xl p-3 disabled:bg-gray-900 disabled:text-gray-500 flex flex-row gap-2 grow justify-center items-center min-w-0 transition-colors duration-300"
+	class="h-12 bg-gray-700 rounded-xl p-3 disabled:bg-gray-900 disabled:text-gray-500 flex flex-row gap-2 grow justify-center content-baseline min-w-0 transition-colors duration-300"
 	style={color ? "background-color: " + color : ""}>
 	{#if $currentlyPlaying?.song?.name}
 		<svg
@@ -52,7 +52,7 @@
 						d="M12,2c-5.514,0 -10,4.486 -10,10c0,5.514 4.486,10 10,10c5.514,0 10,-4.486 10,-10c0,-5.514 -4.486,-10 -10,-10zM14.586,12l-1.586,-1.586v5.586c0,0.552 -0.448,1 -1,1v0c-0.552,0 -1,-0.448 -1,-1v-5.586l-1.586,1.586c-0.39,0.39 -1.024,0.39 -1.414,0v0c-0.39,-0.39 -0.39,-1.024 0,-1.414l3.293,-3.293c0.39,-0.39 1.024,-0.39 1.414,0l3.293,3.293c0.39,0.39 0.39,1.024 0,1.414v0c-0.39,0.39 -1.024,0.39 -1.414,0z" /></g
 				></g>
 		</svg>
-		<p class="whitespace-nowrap overflow-hidden overflow-ellipsis">
+		<p class="whitespace-nowrap overflow-hidden overflow-ellipsis translate-y-[0.0625rem]">
 			{$currentlyPlaying?.song?.name}
 		</p>
 	{/if}

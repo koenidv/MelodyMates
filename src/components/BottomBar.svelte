@@ -41,7 +41,7 @@
 			</svg>
 		{/if}
 		<svg
-			class="w-10 h-10 p-2 ml-1"
+			class="w-10 h-10 p-2 ml-2"
 			xmlns="http://www.w3.org/2000/svg"
 			x="0px"
 			y="0px"
