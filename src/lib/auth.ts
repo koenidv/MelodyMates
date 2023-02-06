@@ -116,7 +116,7 @@ export async function userExists(id: string, fauna: faunadb.Client) {
   console.time("User Exists Query");
 
   const queried = await fauna.query(
-    q.Exists(q.Match(q.Index("unique_User_id"), id)),
+    q.Exists(q.Match(q.Index("user_id"), id)),
   );
   console.timeEnd("User Exists Query");
 
