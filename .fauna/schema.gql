@@ -1,4 +1,4 @@
-type User{
+type User {
 	id: String! @unique
 	profile_name: String!
 	profile_image: String
@@ -6,47 +6,50 @@ type User{
 	private: PrivateUserData!
 }
 
-type PrivateUserData{
+type PrivateUserData {
 	profile_song: Song
-	follows: [Friends!]! @relation(
-	name: "follows_self"
-)
-	incoming_requests: [FollowRequest!]! @relation(
-	name: "incoming_request"
-)
+	follows: [Friends!]! @relation(name: "follows_self")
+	outgoing_requests: [FollowRequest!]! @relation(name: "incoming_request")
 	phone_hash: String
 }
 
-type Friends{
-	self: User! @relation(
-	name: "follows_self"
-)
+type Friends {
+	self: User! @relation(name: "follows_self")
 	follows: User!
 }
 
-type FollowRequest{
+type FollowRequest {
 	from: User!
-	recipient: User! @relation(
-	name: "incoming_request"
-)
+	recipient: User! @relation(name: "incoming_request")
 }
 
-type Song{
+type Song {
 	id: String! @unique
 	name: String!
-	artist: String! // todo make type Artist
-	length_seconds: Int!
-	cover: String
+	artists: [Artist!]!
+	album: Album!
+	length_ms: Int!
+}
+
+type Artist {
+	id: String!
+	name: String!
+}
+
+type Album {
+	id: String!
+	name: String!
+	artists: [Artist!]!
+	cover_image: String
 	theme_color: String
 }
 
-type Post{
+type Post {
 	song: Song!
 	author: User!
-	reactions: [React!]!
 }
 
-type React{
+type React {
 	emoji: String!
 	post: Post!
 	author: User!
