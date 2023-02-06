@@ -21,9 +21,10 @@ type FollowRequest {
 type Song {
 	id: String! @unique
 	name: String!
+	length_ms: Int!
 	artists: [Artist!]! @relation(name: "artist_songs")
 	album: Album!
-	length_ms: Int!
+	original_creator_ref: String!
 }
 
 type Artist {
@@ -31,19 +32,21 @@ type Artist {
 	name: String!
 	albums: [Album!]! @relation(name: "artist_albums")
 	songs: [Song!]! @relation(name: "artist_songs")
+	original_creator_ref: String!
 }
 
 type Album {
 	id: String! @unique
 	name: String!
-	artists: [Artist]! @relation(name: "artist_albums")
 	cover_image: String
 	theme_color: String
+	artists: [Artist]! @relation(name: "artist_albums")
+	original_creator_ref: String!
 }
 
 type Post {
-	song: Song!
 	author: User!
+	song: Song!
 	comment: String
 }
 
