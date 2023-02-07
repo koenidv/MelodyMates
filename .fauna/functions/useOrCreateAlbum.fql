@@ -1,0 +1,35 @@
+{
+  name: "useOrCreateAlbum",
+  role: Role("useOrCreate_Functions"),
+  body: Query(
+    Lambda(
+      ["id", "name", "cover_image", "theme_color", "artists"],
+      Let(
+        { album_ref: Match(Index("album_id"), Var("id")) },
+        If(
+          Exists(Var("album_ref")),
+          Select("ref", Get(Var("album_ref"))),
+          Select(
+            "ref",
+            Create(Collection("Album"), {
+              data: {
+                id: Var("id"),
+                name: Var("name"),
+                cover_image: Var("cover_image"),
+                theme_color: Var("theme_color"),
+                artists: Map(
+                  Var("artists"),
+                  Lambda(
+                    "artist",
+                    Call(Function("useOrCreateArtist"), Var("artist"))
+                  )
+                ),
+                original_creator_ref: CurrentIdentity()
+              }
+            })
+          )
+        )
+      )
+    )
+  )
+}

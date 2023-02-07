@@ -1,0 +1,35 @@
+{
+  name: "useOrCreateSong",
+  role: Role("useOrCreate_Functions"),
+  body: Query(
+    Lambda(
+      ["song_id", "song_name", "length", "artists", "album"],
+      Let(
+        { song_ref: Match(Index("song_id"), Var("song_id")) },
+        If(
+          Exists(Var("song_ref")),
+          Select("ref", Get(Var("song_ref"))),
+          Select(
+            "ref",
+            Create(Collection("Song"), {
+              data: {
+                id: Var("song_id"),
+                name: Var("song_name"),
+                length_ms: Var("length"),
+                artists: Map(
+                  Var("artists"),
+                  Lambda(
+                    "artist",
+                    Call(Function("useOrCreateArtist"), Var("artist"))
+                  )
+                ),
+                album: Call(Function("useOrCreateAlbum"), Var("album")),
+                original_creator_ref: CurrentIdentity()
+              }
+            })
+          )
+        )
+      )
+    )
+  )
+}

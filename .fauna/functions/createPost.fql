@@ -1,0 +1,19 @@
+{
+  name: "createPost",
+  role: Role("useOrCreate_Functions"),
+  body: Query(
+    Lambda(
+      ["song", "comment"],
+      Create(Collection("Post"), {
+        data: {
+          author: Select(
+            "ref",
+            Get(Match(Index("user_id"), CurrentIdentity()))
+          ),
+          song: Call(Function("useOrCreateSong"), Var("song")),
+          comment: Var("comment")
+        }
+      })
+    )
+  )
+}

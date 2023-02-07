@@ -1,0 +1,26 @@
+{
+  name: "useOrCreateArtist",
+  role: Role("useOrCreate_Functions"),
+  body: Query(
+    Lambda(
+      ["id", "name"],
+      Let(
+        { artist_ref: Match(Index("artist_id"), Var("id")) },
+        If(
+          Exists(Var("artist_ref")),
+          Select("ref", Get(Var("artist_ref"))),
+          Select(
+            "ref",
+            Create(Collection("Artist"), {
+              data: {
+                id: Var("id"),
+                name: Var("name"),
+                original_creator_ref: CurrentIdentity()
+              }
+            })
+          )
+        )
+      )
+    )
+  )
+}
