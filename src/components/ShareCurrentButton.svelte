@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { getSongColor } from "$lib/colors";
+	import { createPost } from "$lib/db";
 	import { currentlyPlaying } from "$lib/store";
 	import { get } from "svelte/store";
 
@@ -18,11 +19,43 @@
 	}
 
 	$: $currentlyPlaying, updateColor();
+
+	function postCurrentSong() {
+		const currentlyPlayingOldType = get(currentlyPlaying).song;
+		if (!currentlyPlayingOldType) return;
+		createPost(
+			{
+				id: currentlyPlayingOldType.id,
+				name: currentlyPlayingOldType.name,
+				length_ms: currentlyPlayingOldType.duration,
+				artists: [
+					{
+						id: currentlyPlayingOldType.artists[0].id,
+						name: currentlyPlayingOldType.artists[0].name
+					}
+				],
+				album: {
+					id: currentlyPlayingOldType.album.id,
+					name: currentlyPlayingOldType.album.name,
+					cover_image: currentlyPlayingOldType.album.cover_image,
+					theme_color: color || "#000000",
+					artists: [
+						{
+							id: currentlyPlayingOldType.artists[0].id,
+							name: currentlyPlayingOldType.artists[0].name
+						}
+					]
+				}
+			},
+			null
+		);
+	}
 </script>
 
 <button
 	class="h-12 bg-gray-700 rounded-xl p-3 disabled:bg-gray-900 disabled:text-gray-500 flex flex-row gap-2 grow justify-center content-baseline min-w-0 transition-colors duration-300"
-	style={color ? "background-color: " + color : ""}>
+	style={color ? "background-color: " + color : ""}
+	on:click={postCurrentSong}>
 	{#if $currentlyPlaying?.song?.name}
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
