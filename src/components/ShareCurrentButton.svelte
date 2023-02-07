@@ -86,7 +86,7 @@
 				></g>
 		</svg>
 		<p class="whitespace-nowrap overflow-hidden overflow-ellipsis translate-y-[0.0625rem]">
-			{$currentlyPlaying?.song?.name}
+			{($currentlyPlaying?.song?.name.match(/^([^\(\-\|\/]+)/g) || ["Currently Playing"])[0].trim()}
 		</p>
 	{/if}
 </button>

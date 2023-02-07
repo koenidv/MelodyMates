@@ -36,9 +36,8 @@ export async function queryCurrentSong() {
       },
     },
   );
+  // todo try/catch here
   const json = await res.json();
-
-  console.log(json);
 
   currentlyPlaying.set({
     song: {
