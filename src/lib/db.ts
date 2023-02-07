@@ -7,6 +7,7 @@ type Song = {
   id: string;
   name: string;
   length_ms: number;
+  isrc: string;
   artists: Artist[];
   album: Album;
 };

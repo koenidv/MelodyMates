@@ -29,6 +29,7 @@ type Song = {
     popularity: number;
     type: string;
     preview_url: string;
+    isrc: string;
 };
 
 type Artist = {

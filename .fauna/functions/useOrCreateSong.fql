@@ -3,7 +3,7 @@
   role: Role("useOrCreate_Functions"),
   body: Query(
     Lambda(
-      ["song_id", "song_name", "length", "artists", "album"],
+      ["song_id", "song_name", "length", "isrc", "artists", "album"],
       Let(
         { song_ref: Match(Index("song_id"), Var("song_id")) },
         If(
@@ -16,6 +16,7 @@
                 id: Var("song_id"),
                 name: Var("song_name"),
                 length_ms: Var("length"),
+                isrc: Var("isrc"),
                 artists: Map(
                   Var("artists"),
                   Lambda(

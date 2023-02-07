@@ -1,9 +1,10 @@
 type User {
-	id: String! @unique
+	id: String! @unique(index: "user_id")
 	profile_name: String!
 	profile_image: String
 	spotify_url: String!
 	private: PrivateUserData! @relation(name: "user_private")
+	posts: [Post!]! @relation(name: "user_posts")
 }
 
 type PrivateUserData {
@@ -19,16 +20,18 @@ type FollowRequest {
 }
 
 type Song {
-	id: String! @unique
+	id: String! @unique(index: "song_id")
 	name: String!
 	length_ms: Int!
+	isrc: String!
 	artists: [Artist!]! @relation(name: "artist_songs")
 	album: Album!
 	original_creator_ref: String!
+	in_posts: [Post!]! @relation(name: "post_song")
 }
 
 type Artist {
-	id: String! @unique
+	id: String! @unique(index: "artist_id")
 	name: String!
 	albums: [Album!]! @relation(name: "artist_albums")
 	songs: [Song!]! @relation(name: "artist_songs")
@@ -36,7 +39,7 @@ type Artist {
 }
 
 type Album {
-	id: String! @unique
+	id: String! @unique(index: "album_id")
 	name: String!
 	cover_image: String
 	theme_color: String
@@ -45,8 +48,8 @@ type Album {
 }
 
 type Post {
-	author: User!
-	song: Song!
+	author: User! @relation(name: "user_posts")
+	song: Song! @relation(name: "post_song")
 	comment: String
 }
 
@@ -61,4 +64,9 @@ type Reply {
 	author: User!
 	comment: String
 	song: Song
+}
+
+type Query {
+	allPosts: [Post!]
+	allUsers: [User!]
 }

@@ -58,6 +58,7 @@ export async function queryCurrentSong() {
       popularity: json.item.popularity,
       type: json.item.type,
       preview_url: json.item.preview_url,
+      isrc: json.item.external_ids.isrc,
     },
     progress_ms: json.progress_ms,
     is_playing: json.is_playing,

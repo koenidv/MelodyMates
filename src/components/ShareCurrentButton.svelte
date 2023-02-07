@@ -28,6 +28,7 @@
 				id: currentlyPlayingOldType.id,
 				name: currentlyPlayingOldType.name,
 				length_ms: currentlyPlayingOldType.duration,
+				isrc : currentlyPlayingOldType.isrc,
 				artists: [
 					{
 						id: currentlyPlayingOldType.artists[0].id,
