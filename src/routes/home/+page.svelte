@@ -1,13 +1,13 @@
 <script lang="ts">
-	import BottomBar from '$components/BottomBar.svelte';
-	import { startNowPlayingObserver, stopNowPlayingObserver } from '$lib/spotify';
+	import BottomBar from "$components/BottomBar.svelte";
+	import Feed from "$components/Feed.svelte"
+	import { startNowPlayingObserver, stopNowPlayingObserver } from "$lib/spotify";
 
 	stopNowPlayingObserver();
 	startNowPlayingObserver();
 </script>
 
-<div>
-	<div class="fixed bottom-0 left-0">
-		<BottomBar />
-	</div>
+<div class="overflow-x-hidden">
+	<Feed />
+	<BottomBar />
 </div>
