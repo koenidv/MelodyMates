@@ -10,52 +10,33 @@
 	function updateColor() {
 		if (!get(currentlyPlaying)?.song?.id) return;
 		if (lastsongId === get(currentlyPlaying).song.id) return;
-		color = undefined;
 
-		getSongColor(get(currentlyPlaying).song.album.cover_image).then((hex: string) => {
-			color = hex;
-		});
+		getSongColor(get(currentlyPlaying).song.album.cover_image, get(currentlyPlaying).song.id).then(
+			({ hex, songid }) => {
+				currentlyPlaying.update((current) => {
+					if (current.song.id !== songid) return current;
+					current.song.album.theme_color = hex;
+					return current;
+				});
+			}
+		);
 		lastsongId = get(currentlyPlaying).song.id;
 	}
 
 	$: $currentlyPlaying, updateColor();
 
 	function postCurrentSong() {
-		const currentlyPlayingOldType = get(currentlyPlaying).song;
-		if (!currentlyPlayingOldType) return;
-		createPost(
-			{
-				id: currentlyPlayingOldType.id,
-				name: currentlyPlayingOldType.name,
-				length_ms: currentlyPlayingOldType.duration,
-				isrc : currentlyPlayingOldType.isrc,
-				artists: [
-					{
-						id: currentlyPlayingOldType.artists[0].id,
-						name: currentlyPlayingOldType.artists[0].name
-					}
-				],
-				album: {
-					id: currentlyPlayingOldType.album.id,
-					name: currentlyPlayingOldType.album.name,
-					cover_image: currentlyPlayingOldType.album.cover_image,
-					theme_color: color || "#000000",
-					artists: [
-						{
-							id: currentlyPlayingOldType.artists[0].id,
-							name: currentlyPlayingOldType.artists[0].name
-						}
-					]
-				}
-			},
-			null
-		);
+		const currentSong = get(currentlyPlaying).song;
+		if (!currentSong) return;
+		createPost(currentSong, null);
 	}
 </script>
 
 <button
 	class="h-12 bg-gray-700 rounded-xl p-3 disabled:bg-gray-900 disabled:text-gray-500 flex flex-row gap-2 grow justify-center content-baseline min-w-0 transition-colors duration-300"
-	style={color ? "background-color: " + color : ""}
+	style={$currentlyPlaying.song && $currentlyPlaying.song.album.theme_color
+		? "background-color: " + $currentlyPlaying.song.album.theme_color
+		: ""}
 	on:click={postCurrentSong}>
 	{#if $currentlyPlaying?.song?.name}
 		<svg

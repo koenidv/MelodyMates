@@ -1,6 +1,12 @@
 import Vibrant from "node-vibrant";
 
-export async function getSongColor(url: string) {
+export async function getSongColor(
+  url: string,
+  songid?: string,
+): Promise<{ hex: string, songid?: string }> {
   const palette = await Vibrant.from(url).getPalette();
-  return palette.DarkVibrant.hex;
+  return {
+    hex: palette.DarkVibrant?.hex || "#000000",
+    songid: songid,
+  };
 }

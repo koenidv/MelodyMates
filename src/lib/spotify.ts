@@ -41,28 +41,38 @@ export async function queryCurrentSong() {
 
   currentlyPlaying.set({
     song: {
-      id: json.item.id,
-      name: json.item.name,
-      artists: json.item.artists.map((artist: any) => {
+      id: item.id,
+      name: item.name,
+      length_ms: item.duration_ms,
+      isrc: item.external_ids.isrc,
+      preview_url: item.preview_url,
+      artists: item.artists.map((artist: any) => {
         return {
           id: artist.id,
           name: artist.name,
         };
       }),
       album: {
-        id: json.item.album.id,
-        name: json.item.album.name,
-        cover_image: json.item.album.images[0].url,
+        id: item.album.id,
+        name: item.album.name,
+        cover_image: item.album.images[0].url,
+        theme_color: null,
+        artists: item.artists.map((artist: any) => {
+          return {
+            id: artist.id,
+            name: artist.name,
+          };
+        }),
       },
-      duration: json.item.duration_ms,
-      popularity: json.item.popularity,
-      type: json.item.type,
-      preview_url: json.item.preview_url,
-      isrc: json.item.external_ids.isrc,
     },
-    progress_ms: json.progress_ms,
-    is_playing: json.is_playing,
-    timestamp: json.timestamp,
+    meta: {
+      progress_ms: json.progress_ms,
+      is_playing: json.is_playing,
+      is_current: true,
+      timestamp: json.timestamp,
+      type: item.type,
+      popularity: item.popularity,
+    },
   });
 
   return true;
