@@ -3,11 +3,25 @@ import { get } from "svelte/store";
 import { identity } from "$lib/store";
 const q = faunadb.query;
 
+type NowPlaying = {
+  song: Song;
+  meta: SongMeta;
+};
+
+type SongMeta = {
+  progress_ms: number;
+  is_playing: boolean;
+  timestamp: number;
+  type: string;
+  popularity: number;
+};
+
 type Song = {
   id: string;
   name: string;
   length_ms: number;
   isrc: string;
+  preview_url: string;
   artists: Artist[];
   album: Album;
 };
