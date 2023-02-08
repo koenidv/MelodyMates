@@ -39,8 +39,10 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@urql/svelte": "^3.0.3",
 		"buffer": "^6.0.3",
 		"faunadb": "^4.7.1",
+		"graphql": "^16.6.0",
 		"jsonwebtoken": "^9.0.0",
 		"node-vibrant": "3.1.6",
 		"prettier-plugin-tailwindcss": "^0.2.2",

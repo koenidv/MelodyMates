@@ -6,7 +6,7 @@ export async function getSongColor(
 ): Promise<{ hex: string, songid?: string }> {
   const palette = await Vibrant.from(url).getPalette();
   return {
-    hex: palette.DarkVibrant?.hex || "#000000",
+    hex: palette.DarkVibrant?.hex || "#394151",
     songid: songid,
   };
 }

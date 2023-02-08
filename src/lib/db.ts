@@ -62,7 +62,6 @@ function nestedObjectToArray(obj: any): any[] {
 }
 
 export async function createPost(song: Song, comment: string | null) {
-    console.log([nestedObjectToArray(song), comment])
   return await fauna().query(
     q.Call(
       q.Function("createPost"),
