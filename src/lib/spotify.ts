@@ -10,13 +10,12 @@ export async function startNowPlayingObserver() {
 }
 
 async function recursiveObserver() {
-  try {
-    // todo Error in async currentsong function. Query last if failed .json() or .id not found
-    queryCurrentSong();
+  const success = await queryCurrentSong();
+  if (success) {
     timeoutId = setTimeout(async () => {
       recursiveObserver();
     }, 8_000);
-  } catch (err) {
+  } else {
     queryLastPlayed();
     timeoutId = setTimeout(async () => {
       recursiveObserver();
@@ -36,10 +35,44 @@ export async function queryCurrentSong() {
       },
     },
   );
-  // todo try/catch here
+  let json;
+  let item;
+  try {
+    json = await res.json();
+    item = json.item;
+  } catch (err) {
+    return false;
+  }
+
+  currentlyPlaying.set(apiResponseToNowPlaying(item, json));
+  return true;
+}
+
+export async function queryLastPlayed() {
+  if (!get(identity)?.spotify?.access_token) return;
+  await refreshSpotifyToken();
+  const res = await fetch(
+    "https://api.spotify.com/v1/me/player/recently-played?limit=1",
+    {
+      headers: {
+        Authorization: "Bearer " + get(identity)?.spotify?.access_token,
+      },
+    },
+  );
   const json = await res.json();
 
-  currentlyPlaying.set({
+  if (!json.items || json.items.legth === 0) return false;
+
+  currentlyPlaying.set(
+    apiResponseToNowPlaying(json.items[0].track, {
+      timestamp: json.items[0].played_at,
+    }),
+  );
+  return true;
+}
+
+function apiResponseToNowPlaying(item: any, meta: any | undefined) {
+  return {
     song: {
       id: item.id,
       name: item.name,
@@ -66,32 +99,14 @@ export async function queryCurrentSong() {
       },
     },
     meta: {
-      progress_ms: json.progress_ms,
-      is_playing: json.is_playing,
+      progress_ms: meta?.progress_ms || 0,
+      is_playing: meta?.is_playing || false,
       is_current: true,
-      timestamp: json.timestamp,
+      timestamp: meta?.timestamp || 0,
       type: item.type,
       popularity: item.popularity,
     },
-  });
-
-  return true;
-}
-
-export async function queryLastPlayed() {
-  if (!get(identity)?.spotify?.access_token) return;
-  await refreshSpotifyToken();
-  fetch("https://api.spotify.com/v1/me/player/recently-played?limit=1", {
-    headers: {
-      Authorization: "Bearer " + get(identity)?.spotify?.access_token,
-    },
-  }).then(
-    (res) => {
-      res.json().then((data) => {
-        console.log(data);
-      });
-    },
-  );
+  };
 }
 
 export function stopNowPlayingObserver() {
