@@ -53,6 +53,7 @@ function fauna(): faunadb.Client {
 }
 
 function nestedObjectToArray(obj: any): any[] {
+  if (!obj) return obj;
   return Object.keys(obj).map((key) => {
     if (typeof obj[key] == "object") {
       return nestedObjectToArray(obj[key]);

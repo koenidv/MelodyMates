@@ -10,14 +10,9 @@
 	function updateColor() {
 		if (!get(currentlyPlaying)?.song?.id) return;
 		if (lastsongId === get(currentlyPlaying).song.id) return;
-
 		getSongColor(get(currentlyPlaying).song.album.cover_image, get(currentlyPlaying).song.id).then(
 			({ hex, songid }) => {
-				currentlyPlaying.update((current) => {
-					if (current.song.id !== songid) return current;
-					current.song.album.theme_color = hex;
-					return current;
-				});
+				color = hex;
 			}
 		);
 		lastsongId = get(currentlyPlaying).song.id;
@@ -28,15 +23,14 @@
 	function postCurrentSong() {
 		const currentSong = get(currentlyPlaying).song;
 		if (!currentSong) return;
+		currentSong.album.theme_color = color || null;
 		createPost(currentSong, null);
 	}
 </script>
 
 <button
 	class="h-12 bg-gray-700 rounded-xl p-3 disabled:bg-gray-900 disabled:text-gray-500 flex flex-row gap-2 grow justify-center content-baseline min-w-0 transition-colors duration-300"
-	style={$currentlyPlaying.song && $currentlyPlaying.song.album.theme_color
-		? "background-color: " + $currentlyPlaying.song.album.theme_color
-		: ""}
+	style={color ? "background-color: " + color : ""}
 	on:click={postCurrentSong}>
 	{#if $currentlyPlaying?.song?.name}
 		<svg
