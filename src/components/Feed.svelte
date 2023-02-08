@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { createGraphClient } from "$lib/graphClient";
 	import { getContextClient, gql, queryStore } from "@urql/svelte";
+	import Post from "$components/Post.svelte";
 
 	createGraphClient();
 
@@ -41,12 +42,14 @@
 	});
 </script>
 
-<div class="feed">
+<div class="feed p-2">
 	{#if $posts.fetching}
 		<p>Loading...</p>
 	{:else if $posts.error}
 		<p>Oh no... {$posts.error.message}</p>
 	{:else}
-		{JSON.stringify($posts.data)}
+		{#each $posts.data.allPosts.data as post}
+			<Post {post} />
+		{/each}
 	{/if}
 </div>

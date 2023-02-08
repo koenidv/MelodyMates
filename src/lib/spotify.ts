@@ -90,7 +90,7 @@ function apiResponseToNowPlaying(item: any, meta: any | undefined) {
         name: item.album.name,
         cover_image: item.album.images[0].url,
         theme_color: null,
-        artists: item.artists.map((artist: any) => {
+        artists: item.album.artists.map((artist: any) => {
           return {
             id: artist.id,
             name: artist.name,
