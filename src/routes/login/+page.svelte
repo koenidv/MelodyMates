@@ -9,10 +9,10 @@
     <a href={OAUTH_URL} class="w-full bg-[#1db954] flex items-center justify-center p-3 m-2 rounded-xl">
         <img class="max-h-8" src="/icons/spotify_logo_white.png" alt="Sign in with Spotify"/>
     </a>
-    <a href="#" class="w-full bg-[#202020] flex items-center justify-center p-3 mx-2 mb-3 rounded-xl gap-2">
+    <!--<a href="#" class="w-full bg-[#202020] flex items-center justify-center p-3 mx-2 mb-3 rounded-xl gap-2">
         <img class="max-h-8" src="/icons/apple_music_logo_white.svg" alt="Sign in with Spotify"/>
         <p class="font-medium">Apple Music</p>    
-    </a>
+    </a>-->
     <p>Continue with your favorite streaming service</p>
     <p class="mt-[6vh] text-center">⚠</p>
     <p class="text-center">The PWA Client is for testing only and might change or brake any time</p>
