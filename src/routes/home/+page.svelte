@@ -7,7 +7,7 @@
 	startNowPlayingObserver();
 </script>
 
-<div class="overflow-x-hidden">
+<div class="overflow-x-hidden h-full">
 	<Feed />
 	<BottomBar />
 </div>

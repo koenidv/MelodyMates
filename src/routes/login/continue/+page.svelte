@@ -35,6 +35,6 @@
 	});
 </script>
 
-<div class="flex h-screen w-screen items-center justify-center p-8">
+<div class="flex h-full w-full items-center justify-center p-8">
 	<SyncLoader color="#ffffff" />
 </div>

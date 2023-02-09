@@ -16,6 +16,7 @@ async function recursiveObserver() {
       recursiveObserver();
     }, 8_000);
   } else {
+    // todo only query now playing every 16s, last song less often
     queryLastPlayed();
     timeoutId = setTimeout(async () => {
       recursiveObserver();
@@ -51,6 +52,7 @@ export async function queryCurrentSong() {
 export async function queryLastPlayed() {
   if (!get(identity)?.spotify?.access_token) return;
   await refreshSpotifyToken();
+
   const res = await fetch(
     "https://api.spotify.com/v1/me/player/recently-played?limit=1",
     {
