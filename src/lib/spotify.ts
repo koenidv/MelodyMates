@@ -3,6 +3,7 @@ import { refreshSpotifyToken } from "$lib/auth";
 import { currentlyPlaying, identity } from "$lib/store";
 
 let timeoutId: NodeJS.Timer | null | undefined = undefined;
+let lastPlayedQueryTimestamp = 0;
 
 export async function startNowPlayingObserver() {
   timeoutId = undefined;
@@ -10,14 +11,19 @@ export async function startNowPlayingObserver() {
 }
 
 async function recursiveObserver() {
+  // While playing, query current song every 8 seconds
+  // When not playing, query current song every 16 seconds
+  // and last played song every ~64 seconds
   const success = await queryCurrentSong();
   if (success) {
     timeoutId = setTimeout(async () => {
       recursiveObserver();
     }, 8_000);
   } else {
-    // todo only query now playing every 16s, last song less often
-    queryLastPlayed();
+    if (Date.now() - lastPlayedQueryTimestamp > 60_000) {
+      queryLastPlayed();
+      lastPlayedQueryTimestamp = Date.now();
+    }
     timeoutId = setTimeout(async () => {
       recursiveObserver();
     }, 16_000);
