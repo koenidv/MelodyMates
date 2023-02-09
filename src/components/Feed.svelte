@@ -43,7 +43,7 @@
 	});
 </script>
 
-<div class="feed p-2 h-full">
+<div class="feed p-2 h-full pb-[4.5rem] overflow-y-auto">
 	{#if $posts.fetching}
 		<div class="flex h-full w-full items-center justify-center p-8">
 			<SyncLoader color="#ffffff" />
