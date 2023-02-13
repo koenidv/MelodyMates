@@ -3,7 +3,7 @@ type User {
 	profile_name: String!
 	profile_image: String
 	spotify_url: String!
-	private: PrivateUserData! @relation(name: "user_private")
+	private: PrivateUserData @relation(name: "user_private")
 	posts: [Post!]! @relation(name: "user_posts")
 }
 
@@ -70,4 +70,5 @@ type Reply {
 type Query {
 	allPosts: [Post!]
 	allUsers: [User!]
+	userById(id: String!): User
 }
