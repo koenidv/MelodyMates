@@ -3,9 +3,9 @@
 	import { identity } from "$lib/store";
 </script>
 
-<div class="fixed bottom-0 left-0">
+<div class="fixed bottom-0 left-0 w-screen">
 	<div
-		class="flex flex-row gap-8 justify-between items-center w-screen p-2 pt-0 flex-1 min-w-0 bg-black shadow-bottombar">
+		class="flex flex-row gap-8 justify-between items-center w-screen max-w-screen-md mx-auto p-2 pt-0 flex-1 min-w-0 bg-black shadow-bottombar">
 		<div class="flex flex-row shrink-0">
 			<a href="/me">
 				{#if $identity?.user?.profile_image}
