@@ -25,6 +25,7 @@ type Song {
 	length_ms: Int!
 	isrc: String!
 	preview_url: String!
+	primary_artist: Artist! @relation(name: "artist_song_primary")
 	artists: [Artist!]! @relation(name: "artist_songs")
 	album: Album!
 	original_creator_ref: String!
@@ -36,6 +37,7 @@ type Artist {
 	name: String!
 	albums: [Album!]! @relation(name: "artist_albums")
 	songs: [Song!]! @relation(name: "artist_songs")
+	songs_primary: [Song!]! @relation(name: "artist_song_primary")
 	original_creator_ref: String!
 }
 

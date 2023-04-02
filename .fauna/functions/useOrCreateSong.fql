@@ -3,7 +3,15 @@
   role: Role("useOrCreate_Functions"),
   body: Query(
     Lambda(
-      ["song_id", "song_name", "length", "isrc", "preview_url", "artists", "album"],
+      [
+        "song_id",
+        "song_name",
+        "length",
+        "isrc",
+        "preview_url",
+        "artists",
+        "album"
+      ],
       Let(
         { song_ref: Match(Index("song_id"), Var("song_id")) },
         If(
@@ -24,6 +32,10 @@
                     "artist",
                     Call(Function("useOrCreateArtist"), Var("artist"))
                   )
+                ),
+                primary_artist: Call(
+                  Function("useOrCreateArtist"),
+                  Select(0, Var("artists"))
                 ),
                 album: Call(Function("useOrCreateAlbum"), Var("album")),
                 original_creator_ref: CurrentIdentity()
