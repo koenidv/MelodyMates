@@ -19,10 +19,7 @@
 			<div class="flex flex-col">
 				<p>{post.song.name}</p>
 				<p class="opacity-75">
-					{#each post.song.artists.data as artist}
-						{artist}
-					{/each}
-					Materia
+					{post.song.primary_artist.name}
 				</p>
 			</div>
 		</div>

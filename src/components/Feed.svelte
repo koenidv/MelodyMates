@@ -23,11 +23,9 @@
 							id
 							name
 							length_ms
-							artists {
-								data {
-									id
-									name
-								}
+							primary_artist {
+								id
+								name
 							}
 							album {
 								id
