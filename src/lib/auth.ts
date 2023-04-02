@@ -18,7 +18,7 @@ const SPOTIFY_SCOPES = [
 const SPOTIFY_CLIENT_ID = "f1c9da828b51491dabf6c4df85fbd9ea";
 const SPOTIFY_OAUTH_REDIRECT = dev
   ? "http://localhost:5173/login/continue"
-  : "https://melodymates.netlify.app/login/continue";
+  : "https://melodymates.app/login/continue";
 
 export const OAUTH_URL =
   `https://accounts.spotify.com/authorize?client_id=${SPOTIFY_CLIENT_ID}&response_type=code&redirect_uri=${
