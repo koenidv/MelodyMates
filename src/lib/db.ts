@@ -69,3 +69,12 @@ export async function createPost(song: Song, comment: string | null) {
     ),
   );
 }
+
+export async function createFollowRequest(user_id: string) {
+  return await fauna().query(
+    q.Call(
+      q.Function("createFollowRequest"),
+      [user_id],
+    ),
+  );
+}
