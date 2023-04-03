@@ -73,4 +73,5 @@ type Query {
 	allPosts: [Post!]
 	allUsers: [User!]
 	userById(id: String!): User
+	selfFollowsUser(id: String!): Boolean @resolver(name: "selfFollowsUser")
 }
