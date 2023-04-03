@@ -1,0 +1,15 @@
+{
+  name: "createFollowRequest",
+  role: null,
+  body: Query(
+    Lambda(
+      ["to_id"],
+      Create(Collection("FollowRequest"), {
+        data: {
+          from: Select("ref", Get(Match(Index("user_id"), CurrentIdentity()))),
+          recipient: Select("ref", Get(Match(Index("user_id"), Var("to_id"))))
+        }
+      })
+    )
+  )
+}

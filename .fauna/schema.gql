@@ -75,3 +75,7 @@ type Query {
 	userById(id: String!): User
 	selfFollowsUser(id: String!): Boolean @resolver(name: "selfFollowsUser")
 }
+
+type Mutation {
+	createFollowRequest(to: String!): FollowRequest @resolver(name: "createFollowRequest")
+}
