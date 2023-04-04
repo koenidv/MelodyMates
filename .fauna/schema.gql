@@ -72,6 +72,7 @@ type Reply {
 type Query {
 	allPosts: [Post!]
 	allUsers: [User!]
+	allFollowRequests: [FollowRequest!]
 	userById(id: String!): User
 	selfFollowsUser(id: String!): Boolean @resolver(name: "selfFollowsUser")
 }
