@@ -77,6 +77,19 @@
 				`
 		});
 	}
+
+	function acceptRequest(request: Request) {
+		const result = mutationStore({
+			client: contextClient,
+			query: gql`
+					mutation {
+						acceptFollowRequest(ref: "${request._id}") {
+							_id
+						}
+					}
+				`
+		});
+	}
 </script>
 
 <div class="p-2 h-full pb-[4.5rem] overflow-y-auto flex flex-col items-center gap-4 pt-8">
@@ -109,7 +122,7 @@
 						alt="Profile"
 						class="w-6 h-6 rounded-full bg-gray-800" />
 					<p class="text-md grow">{r.from.profile_name}</p>
-					<button class="bg-spotify rounded-full h-8 px-4">Accept</button>
+					<button class="bg-spotify rounded-full h-8 px-4" on:click={() => acceptRequest(r)}>Accept</button>
 					<button
 						class="bg-red-800 rounded-full h-8 w-8 flex items-center justify-center"
 						on:click={() => deleteRequest(r)}>
