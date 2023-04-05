@@ -1,0 +1,58 @@
+{
+  name: "acceptFollowRequest",
+  role: null,
+  body: Query(
+    Lambda(
+      ["request_ref"],
+      Let(
+        { request: Get(Ref(Collection("FollowRequest"), Var("request_ref"))) },
+        If(
+          Equals(
+            Select(["data", "recipient"], Var("request")),
+            Select(["ref"], Get(Match(Index("user_id"), CurrentIdentity())))
+          ),
+          Do(
+            Delete(Select(["ref"], Var("request"))),
+            Let(
+              {
+                priv_from: Get(
+                  Select(
+                    ["data", "private"],
+                    Get(Select(["data", "from"], Var("request")))
+                  )
+                )
+              },
+              Update(Select(["ref"], Var("priv_from")), {
+                data: {
+                  follows: Append(
+                    Select(["data", "recipient"], Var("request")),
+                    Select(["data", "follows"], Var("priv_from"))
+                  )
+                }
+              })
+            ),
+            Let(
+              {
+                priv_recipient: Get(
+                  Select(
+                    ["data", "private"],
+                    Get(Select(["data", "recipient"], Var("request")))
+                  )
+                )
+              },
+              Update(Select(["ref"], Var("priv_recipient")), {
+                data: {
+                  follows: Append(
+                    Select(["data", "from"], Var("request")),
+                    Select(["data", "follows"], Var("priv_recipient"))
+                  )
+                }
+              })
+            )
+          ),
+          Abort("Follow request not found")
+        )
+      )
+    )
+  )
+}

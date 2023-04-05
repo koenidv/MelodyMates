@@ -79,4 +79,5 @@ type Query {
 
 type Mutation {
 	createFollowRequest(to: String!): FollowRequest @resolver(name: "createFollowRequest")
+	acceptFollowRequest(ref: String!): PrivateUserData @resolver(name: "acceptFollowRequest")
 }
