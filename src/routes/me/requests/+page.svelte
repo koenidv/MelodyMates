@@ -1,13 +1,15 @@
 <script lang="ts">
 	import { createGraphClient } from "$lib/graphClient";
-	import { getContextClient, gql, queryStore } from "@urql/svelte";
+	import { getContextClient, gql, mutationStore, queryStore } from "@urql/svelte";
 	import { SyncLoader } from "svelte-loading-spinners";
 	import { identity } from "$lib/store";
+	import { onMount } from "svelte";
 
 	createGraphClient();
+	const contextClient = getContextClient();
 
 	const requests = queryStore({
-		client: getContextClient(),
+		client: contextClient,
 		query: gql`
 			query {
 				allFollowRequests {
@@ -62,6 +64,19 @@
 	}
 
 	$: $requests, sortRequests();
+
+	function deleteRequest(request: Request) {
+		const result = mutationStore({
+			client: contextClient,
+			query: gql`
+					mutation {
+						deleteFollowRequest(id: "${request._id}") {
+							_id
+						}
+					}
+				`
+		});
+	}
 </script>
 
 <div class="p-2 h-full pb-[4.5rem] overflow-y-auto flex flex-col items-center gap-4 pt-8">
@@ -81,7 +96,7 @@
 						alt="Profile"
 						class="w-6 h-6 rounded-full bg-gray-800" />
 					<p class="text-md grow">{r.recipient.profile_name}</p>
-					<button class="opacity-60">Cancel</button>
+					<button class="opacity-60" on:click={() => deleteRequest(r)}>Cancel</button>
 				</div>
 			{/each}
 		</div>
@@ -95,7 +110,9 @@
 						class="w-6 h-6 rounded-full bg-gray-800" />
 					<p class="text-md grow">{r.from.profile_name}</p>
 					<button class="bg-spotify rounded-full h-8 px-4">Accept</button>
-					<button class="bg-red-800 rounded-full h-8 w-8 flex items-center justify-center">
+					<button
+						class="bg-red-800 rounded-full h-8 w-8 flex items-center justify-center"
+						on:click={() => deleteRequest(r)}>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							x="0px"
