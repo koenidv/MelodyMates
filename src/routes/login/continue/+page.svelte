@@ -26,7 +26,7 @@
 			} else {
 				await createUser(userdata, fauna);
 				saveIdentity(jwt, {access_token, expires, refresh_token}, userdata)
-				window.location.replace('/setup');
+				window.location.replace('/home'); // /setup when that page is in use
 			}
 
 		} else {
