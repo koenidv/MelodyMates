@@ -1,0 +1,32 @@
+{
+  name: "createUser",
+  role: null,
+  body: Query(
+    Lambda(
+      ["id", "profile_name", "profile_image", "spotify_url"],
+      Let(
+        {
+          ref: Select(
+            "ref",
+            Create(Collection("User"), {
+              data: {
+                id: Var("id"),
+                profile_name: Var("profile_name"),
+                profile_image: Var("profile_image"),
+                spotify_url: Var("spotify_url")
+              }
+            })
+          )
+        },
+        Let(
+          {
+            priv: Create(Collection("PrivateUserData"), {
+              data: { user: Var("ref"), follows: [] }
+            })
+          },
+          Update(Var("ref"), { data: { private: Var("priv") } })
+        )
+      )
+    )
+  )
+}

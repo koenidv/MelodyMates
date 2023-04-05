@@ -126,14 +126,12 @@ export async function userExists(id: string, fauna: faunadb.Client) {
 export async function createUser(userinfo: any, fauna: faunadb.Client) {
   console.time("Create User Query");
   await fauna.query(
-    q.Create(q.Collection("User"), {
-      data: {
-        id: userinfo.id,
-        profile_name: userinfo.display_name,
-        profile_image: userinfo.profile_image,
-        spotify_url: userinfo.url,
-      },
-    }),
+    q.Call(q.Function("createUser"), [
+      userinfo.id,
+      userinfo.display_name,
+      userinfo.profile_image,
+      userinfo.url,
+    ]),
   );
   console.timeEnd("Create User Query");
 }
