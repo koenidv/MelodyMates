@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { userExists } from "$lib/auth";
+
 	export let post: any;
 </script>
 
@@ -10,10 +12,10 @@
 		alt=""
 		class="absolute top-0 left-0 opacity-25 h-full w-full object-cover blur-md" />
 	<div class="relative flex flex-col gap-2">
-		<div class="flex flex-row items-center gap-1">
+		<a href="/user/{post.author.id}" class="flex flex-row items-center gap-1">
 			<img src={post.author.profile_image} alt="Profile" class="w-5 h-5 rounded-full shadow-sm" />
 			<p class="opacity-75 text-sm">{post.author.profile_name.split(" ")[0]}</p>
-		</div>
+		</a>
 		<div class="flex flex-row gap-2">
 			<img src={post.song.album.cover_image} alt="Album Cover" class="w-16 h-16 rounded-lg" />
 			<div class="flex flex-col">
