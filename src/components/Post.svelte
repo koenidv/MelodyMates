@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { userExists } from "$lib/auth";
+	import { playSong } from "$lib/spotify";
 
 	export let post: any;
 </script>
@@ -18,11 +18,14 @@
 		</a>
 		<div class="flex flex-row gap-2">
 			<img src={post.song.album.cover_image} alt="Album Cover" class="w-16 h-16 rounded-lg" />
-			<div class="flex flex-col">
+			<div class="flex flex-col grow">
 				<p>{post.song.name}</p>
 				<p class="opacity-75">
 					{post.song.primary_artist.name}
 				</p>
+			</div>
+			<div class="flex items-center pr-0.5">
+				<img src="/icons/play.svg" alt="Play song" class="w-9 h-9" on:click={() => playSong(post.song.id)}/>
 			</div>
 		</div>
 	</div>

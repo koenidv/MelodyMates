@@ -121,3 +121,15 @@ export function stopNowPlayingObserver() {
   if (timeoutId) clearTimeout(timeoutId);
   timeoutId = null;
 }
+
+export async function playSong(song_id: string) {
+  await fetch("https://api.spotify.com/v1/me/player/play", {
+    method: "PUT",
+    headers: {
+      Authorization: "Bearer " + get(identity)?.spotify?.access_token,
+    },
+    body: JSON.stringify({
+      uris: [`spotify:track:${song_id}`],
+    }),
+  });
+}
