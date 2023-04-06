@@ -1,5 +1,7 @@
 <script lang="ts">
-	import { playSong } from "$lib/spotify";
+	import { pausePlayback, playSong } from "$lib/spotify";
+	import { currentlyPlaying } from "$lib/store";
+	import { is_client } from "svelte/internal";
 
 	export let post: any;
 </script>
@@ -25,7 +27,21 @@
 				</p>
 			</div>
 			<div class="flex items-center pr-0.5">
-				<img src="/icons/play.svg" alt="Play song" class="w-9 h-9" on:click={() => playSong(post.song.id)}/>
+				{#if post.song.id === $currentlyPlaying.song.id && $currentlyPlaying.meta.is_playing}
+					<!-- svelte-ignore a11y-click-events-have-key-events -->
+					<img
+						src="/icons/stop.svg"
+						alt="Pause song"
+						class="w-9 h-9"
+						on:click={() => pausePlayback()} />
+				{:else}
+					<!-- svelte-ignore a11y-click-events-have-key-events -->
+					<img
+						src="/icons/play.svg"
+						alt="Play song"
+						class="w-9 h-9"
+						on:click={() => playSong(post.song.id)} />
+				{/if}
 			</div>
 		</div>
 	</div>

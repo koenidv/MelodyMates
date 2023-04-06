@@ -133,3 +133,12 @@ export async function playSong(song_id: string) {
     }),
   });
 }
+
+export async function pausePlayback() {
+  await fetch("https://api.spotify.com/v1/me/player/pause", {
+    method: "PUT",
+    headers: {
+      Authorization: "Bearer " + get(identity)?.spotify?.access_token,
+    },
+  });
+}
