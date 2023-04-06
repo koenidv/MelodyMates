@@ -163,3 +163,15 @@ export async function querySongsLiked(song_ids: string[]) {
 
   return likedmap;
 }
+
+export async function likedUnlikeSong(song_id: string, like: boolean) {
+  await fetch(
+    `https://api.spotify.com/v1/me/tracks?ids=${song_id}`,
+    {
+      method: like ? "PUT" : "DELETE",
+      headers: {
+        Authorization: "Bearer " + get(identity)?.spotify?.access_token,
+      },
+    },
+  );
+}

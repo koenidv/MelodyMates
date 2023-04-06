@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { pausePlayback, playSong } from "$lib/spotify";
+	import { likedUnlikeSong, pausePlayback, playSong } from "$lib/spotify";
 	import { currentlyPlaying } from "$lib/store";
 	import { is_client } from "svelte/internal";
 
@@ -28,7 +28,12 @@
 				</p>
 			</div>
 			<div class="flex items-center pr-2 gap-3">
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
+				<img
+					src="/icons/like.svg"
+					alt="Like song"
 					class="w-9 h-9 {liked ? '' : 'opacity-50'}"
+					on:click={() => likedUnlikeSong(post.song.id, !liked)} />
 				{#if post.song.id === $currentlyPlaying.song.id && $currentlyPlaying.meta.is_playing}
 					<!-- svelte-ignore a11y-click-events-have-key-events -->
 					<img
