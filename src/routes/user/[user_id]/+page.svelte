@@ -1,15 +1,17 @@
 <script lang="ts">
 	import { createFollowRequest } from "$lib/db";
 	import { createGraphClient } from "$lib/graphClient";
-	import { getContextClient, gql, queryStore } from "@urql/svelte";
+	import { getContextClient, gql, mutationStore, queryStore } from "@urql/svelte";
 	import { SyncLoader } from "svelte-loading-spinners";
+	import IncomingRequest from "$components/requests/incoming.svelte";
 
 	export let data;
 
 	createGraphClient();
+	const contextClient = getContextClient();
 
 	const user = queryStore({
-		client: getContextClient(),
+		client: contextClient,
 		query: gql`
 			query {
 				userById(id: "${encodeURIComponent(data.user_id)}") {
@@ -35,9 +37,20 @@
 		`
 	});
 
-	function handleFollowButtonClicked(followState: string) {
+	function handleFollowButtonClicked(followState: string, request_id?: string) {
 		if (followState == "none") {
 			createFollowRequest(data.user_id);
+		} else if (followState == "request_outgoing") {
+			const result = mutationStore({
+				client: contextClient,
+				query: gql`
+					mutation {
+						deleteFollowRequest(id: "${request_id!}") {
+							_id
+						}
+					}
+				`
+			});
 		}
 	}
 </script>
@@ -58,15 +71,27 @@
 			{$user.data.userById.profile_name}
 		</h1>
 		{#if $user.data.followState[0] == "request_incoming"}
-			Incoming: {$user.data.followState[1]}
+			<IncomingRequest
+				request={{
+					_id: $user.data.followState[1],
+					from: {
+						id: $user.data.userById.id,
+						profile_name: $user.data.userById.profile_name,
+						profile_image: $user.data.userById.profile_image
+					}
+				}} />
 		{:else}
 			<button
 				class="{$user.data.followState[0] == 'none'
 					? 'bg-spotify'
-					: 'bg-gray-800'} h-10 px-2 rounded-xl flex flex-row gap-2 justify-center items-center transition-colors duration-300"
-				on:click={() => handleFollowButtonClicked($user.data.followState[0])}>
+					: 'bg-gray-800'} h-10 px-2 rounded-xl flex flex-row gap-2 justify-center items-center transition-colors duration-300 min-w-[12rem]"
+				on:click={() =>
+					handleFollowButtonClicked(
+						$user.data.followState[0],
+						$user.data.followState[1] || undefined
+					)}>
 				{$user.data.followState[0] == "follows"
-					? "Following"
+					? "Friends"
 					: $user.data.followState[0] == "request_outgoing"
 					? "Cancel request"
 					: "Add friend"}
