@@ -132,6 +132,7 @@ export async function playSong(song_id: string) {
       uris: [`spotify:track:${song_id}`],
     }),
   });
+  await queryCurrentSong();
 }
 
 export async function pausePlayback() {
