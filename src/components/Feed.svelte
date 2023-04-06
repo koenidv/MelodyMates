@@ -3,6 +3,8 @@
 	import { getContextClient, gql, queryStore } from "@urql/svelte";
 	import { SyncLoader } from "svelte-loading-spinners";
 	import Post from "$components/Post.svelte";
+	import { querySongsLiked } from "$lib/spotify";
+	import { get } from "svelte/store";
 
 	createGraphClient();
 
@@ -39,6 +41,15 @@
 			}
 		`
 	});
+
+	let likedmap = new Map();
+	function updateLikedMap() {
+		if (!$posts.data) return;
+		querySongsLiked(
+			$posts.data.allPosts.data.map((post: { song: { id: any } }) => post.song.id)
+		).then((map) => (likedmap = map));
+	}
+	$: $posts, updateLikedMap();
 </script>
 
 <div class="feed p-2 h-full pb-[4.5rem] overflow-y-auto">
@@ -50,7 +61,7 @@
 		<p>Oh no... {$posts.error.message}</p>
 	{:else}
 		{#each [...$posts.data.allPosts.data].reverse() as post}
-			<Post {post} />
+			<Post {post} liked={likedmap.get(post.song.id)} />
 		{/each}
 	{/if}
 </div>

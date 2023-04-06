@@ -4,6 +4,7 @@
 	import { is_client } from "svelte/internal";
 
 	export let post: any;
+	export let liked: boolean;
 </script>
 
 <div
@@ -26,12 +27,13 @@
 					{post.song.primary_artist.name}
 				</p>
 			</div>
-			<div class="flex items-center pr-0.5">
+			<div class="flex items-center pr-2 gap-3">
+					class="w-9 h-9 {liked ? '' : 'opacity-50'}"
 				{#if post.song.id === $currentlyPlaying.song.id && $currentlyPlaying.meta.is_playing}
 					<!-- svelte-ignore a11y-click-events-have-key-events -->
 					<img
 						src="/icons/stop.svg"
-						alt="Pause song"
+						alt="Stop playing"
 						class="w-9 h-9"
 						on:click={() => pausePlayback()} />
 				{:else}

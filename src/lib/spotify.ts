@@ -143,3 +143,23 @@ export async function pausePlayback() {
     },
   });
 }
+
+export async function querySongsLiked(song_ids: string[]) {
+  // todo spotify limits this call to 50 songs
+  const res = await fetch(
+    `https://api.spotify.com/v1/me/tracks/contains?ids=${song_ids.join(",")}`,
+    {
+      headers: {
+        Authorization: "Bearer " + get(identity)?.spotify?.access_token,
+      },
+    },
+  );
+  const json = await res.json();
+
+  const likedmap = new Map<string, boolean>();
+  song_ids.map((id, i) => {
+    likedmap.set(id, json[i]);
+  });
+
+  return likedmap;
+}
