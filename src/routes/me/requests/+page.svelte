@@ -108,7 +108,9 @@
 						src={r.recipient.profile_image || "/icons/generic_user.svg"}
 						alt="Profile"
 						class="w-6 h-6 rounded-full bg-gray-800" />
-					<p class="text-md grow">{r.recipient.profile_name}</p>
+					<a href="/user/{r.recipient.id}">
+						<p class="text-md grow">{r.recipient.profile_name}</p>
+					</a>
 					<button class="opacity-60" on:click={() => deleteRequest(r)}>Cancel</button>
 				</div>
 			{/each}
@@ -121,8 +123,11 @@
 						src={r.from.profile_image || "/icons/generic_user.svg"}
 						alt="Profile"
 						class="w-6 h-6 rounded-full bg-gray-800" />
-					<p class="text-md grow">{r.from.profile_name}</p>
-					<button class="bg-spotify rounded-full h-8 px-4" on:click={() => acceptRequest(r)}>Accept</button>
+					<a href="/user/{r.from.id}">
+						<p class="text-md grow">{r.from.profile_name}</p>
+					</a>
+					<button class="bg-spotify rounded-full h-8 px-4" on:click={() => acceptRequest(r)}
+						>Accept</button>
 					<button
 						class="bg-red-800 rounded-full h-8 w-8 flex items-center justify-center"
 						on:click={() => deleteRequest(r)}>
