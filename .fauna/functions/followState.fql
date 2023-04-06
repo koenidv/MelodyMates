@@ -1,0 +1,69 @@
+{
+  name: "followState",
+  role: null,
+  body: Query(
+    Lambda(
+      ["follows_id"],
+      Let(
+        {
+          otherref: Select(
+            "ref",
+            Get(Match(Index("user_id"), Var("follows_id")))
+          ),
+          selfdata: Get(Match(Index("user_id"), CurrentIdentity()))
+        },
+        If(
+          ContainsValue(
+            Var("otherref"),
+            Select(
+              ["data", "follows"],
+              Get(Select(["data", "private"], Var("selfdata")))
+            )
+          ),
+          ["follows"],
+          If(
+            Exists(
+              Match(Index("unique_followrequest"), [
+                Select("ref", Var("selfdata")),
+                Var("otherref")
+              ])
+            ),
+            [
+              "request_outgoing",
+              Select(
+                ["ref", "id"],
+                Get(
+                  Match(Index("unique_followrequest"), [
+                    Select("ref", Var("selfdata")),
+                    Var("otherref")
+                  ])
+                )
+              )
+            ],
+            If(
+              Exists(
+                Match(Index("unique_followrequest"), [
+                  Var("otherref"),
+                  Select("ref", Var("selfdata"))
+                ])
+              ),
+              [
+                "request_incoming",
+                Select(
+                  ["ref", "id"],
+                  Get(
+                    Match(Index("unique_followrequest"), [
+                      Var("otherref"),
+                      Select("ref", Var("selfdata"))
+                    ])
+                  )
+                )
+              ],
+              ["none"]
+            )
+          )
+        )
+      )
+    )
+  )
+}

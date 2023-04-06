@@ -49,7 +49,7 @@
 	{:else if $posts.error}
 		<p>Oh no... {$posts.error.message}</p>
 	{:else}
-		{#each $posts.data.allPosts.data as post}
+		{#each [...$posts.data.allPosts.data].reverse() as post}
 			<Post {post} />
 		{/each}
 	{/if}

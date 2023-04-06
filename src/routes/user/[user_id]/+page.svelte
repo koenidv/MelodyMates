@@ -30,13 +30,13 @@
 						}
 					}
 				}
-				selfFollowsUser(id: "${encodeURIComponent(data.user_id)}")
+				followState(id: "${encodeURIComponent(data.user_id)}")
 			}
 		`
 	});
 
-	function handleFollowButtonClicked(followed: boolean) {
-		if (!followed) {
+	function handleFollowButtonClicked(followState: string) {
+		if (followState == "none") {
 			createFollowRequest(data.user_id);
 		}
 	}
@@ -57,12 +57,20 @@
 		<h1 class="text-xl">
 			{$user.data.userById.profile_name}
 		</h1>
-		<button
-			class="h-10 {$user.data.selfFollowsUser
-				? 'bg-gray-800'
-				: 'bg-spotify'} rounded-xl p-3 flex flex-row gap-2 justify-center content-baseline transition-colors duration-300"
-			on:click={() => handleFollowButtonClicked($user.data.selfFollowsUser)}>
-			{$user.data.selfFollowsUser ? "Following" : "Add friend"}
-		</button>
+		{#if $user.data.followState[0] == "request_incoming"}
+			Incoming: {$user.data.followState[1]}
+		{:else}
+			<button
+				class="{$user.data.followState[0] == 'none'
+					? 'bg-spotify'
+					: 'bg-gray-800'} h-10 px-2 rounded-xl flex flex-row gap-2 justify-center items-center transition-colors duration-300"
+				on:click={() => handleFollowButtonClicked($user.data.followState[0])}>
+				{$user.data.followState[0] == "follows"
+					? "Following"
+					: $user.data.followState[0] == "request_outgoing"
+					? "Cancel request"
+					: "Add friend"}
+			</button>
+		{/if}
 	{/if}
 </div>

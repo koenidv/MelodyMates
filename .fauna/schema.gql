@@ -74,7 +74,7 @@ type Query {
 	allUsers: [User!]
 	allFollowRequests: [FollowRequest!]
 	userById(id: String!): User
-	selfFollowsUser(id: String!): Boolean @resolver(name: "selfFollowsUser")
+	followState(id: String!): [String!] @resolver(name: "followState")
 }
 
 type Mutation {
