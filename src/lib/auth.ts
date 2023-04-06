@@ -14,6 +14,9 @@ const SPOTIFY_SCOPES = [
   "user-read-playback-position",
   "user-read-recently-played",
   "user-top-read",
+  "user-modify-playback-state",
+  "user-library-read",
+  "user-library-modify"
 ];
 const SPOTIFY_CLIENT_ID = "f1c9da828b51491dabf6c4df85fbd9ea";
 const SPOTIFY_OAUTH_REDIRECT = dev
