@@ -4,7 +4,7 @@
 	import { getContextClient, gql, queryStore } from "@urql/svelte";
 	import { SyncLoader } from "svelte-loading-spinners";
 	import { get } from "svelte/store";
-	import PostLarge from "$components/post/PostLarge.svelte";
+	import PostSmall from "$components/post/PostSmall.svelte";
 	import CloseButton from "$components/CloseButton.svelte";
 	import { querySongsLiked } from "$lib/spotify";
 
@@ -95,7 +95,7 @@
 		<!-- Posts -->
 		<div id="posts" class="feed h-full">
 			{#each [...$me.data.userById.posts.data].reverse() as post}
-				<PostLarge {post} liked={likedmap.get(post.song.id)} />
+				<PostSmall {post} liked={likedmap.get(post.song.id)} />
 			{/each}
 		</div>
 	{/if}
