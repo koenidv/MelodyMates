@@ -16,7 +16,11 @@
 		class="absolute top-0 left-0 opacity-25 h-full w-full object-cover blur-md" />
 	<div class="relative flex flex-col gap-2">
 		<a href="/user/{post.author.id}" class="flex flex-row items-center gap-1">
-			<img src={post.author.profile_image} alt="Profile" class="w-5 h-5 rounded-full shadow-sm" />
+			<img
+				src={post.author.profile_image || "/icons/generic_user.svg"}
+				alt="Profile"
+				class="w-5 h-5 rounded-full shadow-sm object-cover"
+				style="background-color: {post.song.album.theme_color}"/>
 			<p class="opacity-75 text-sm">{post.author.profile_name.split(" ")[0]}</p>
 		</a>
 		<div class="flex flex-row gap-2">

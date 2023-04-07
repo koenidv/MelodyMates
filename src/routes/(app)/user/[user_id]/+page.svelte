@@ -66,7 +66,7 @@
 		<img
 			src={$user.data.userById.profile_image || "/icons/generic_user.svg"}
 			alt="Profile"
-			class="w-16 h-16 rounded-full bg-gray-800" />
+			class="w-16 h-16 rounded-full bg-gray-800 object-cover" />
 		<h1 class="text-xl">
 			{$user.data.userById.profile_name}
 		</h1>
