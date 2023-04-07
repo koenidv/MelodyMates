@@ -216,8 +216,9 @@ export async function searchSongs(term: string) {
         name: item.album.name,
         cover_image: item.album.images[0].url,
         theme_color: (await getSongColor(
-          get(currentlyPlaying).song.album.cover_image,
-          get(currentlyPlaying).song.id,
+          item.album.images[2]?.url || item.album.images[0]?.url ||
+            get(currentlyPlaying).song.album.cover_image,
+          item.id,
         )).hex,
         artists: item.album.artists.map((artist: any) => {
           return {
