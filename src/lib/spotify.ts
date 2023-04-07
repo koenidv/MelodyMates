@@ -1,6 +1,7 @@
 import { get } from "svelte/store";
 import { refreshSpotifyToken } from "$lib/auth";
 import { currentlyPlaying, identity } from "$lib/store";
+import { getSongColor } from "$lib/colors";
 
 let timeoutId: NodeJS.Timer | null | undefined = undefined;
 let lastPlayedQueryTimestamp = 0;
@@ -133,10 +134,10 @@ export async function playSong(song_id: string) {
     }),
   });
 
-  if(result.status === 404) {
+  if (result.status === 404) {
     // No active player found
     window.open(`spotify:track:${song_id}:play`, "_blank");
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
   }
 
   await queryCurrentSong();
@@ -181,4 +182,52 @@ export async function likedUnlikeSong(song_id: string, like: boolean) {
       },
     },
   );
+}
+
+export async function searchSongs(term: string) {
+  const result = await fetch(
+    `https://api.spotify.com/v1/search?q=${
+      encodeURIComponent(term)
+    }&type=track`,
+    {
+      headers: {
+        Authorization: "Bearer " + get(identity)?.spotify?.access_token,
+      },
+    },
+  );
+
+  const json = await result.json();
+
+  const songs = await Promise.all(json.tracks.items.map(async (item: any) => {
+    return {
+      id: item.id,
+      isrc: item.external_ids.isrc,
+      length_ms: item.duration_ms,
+      name: item.name,
+      preview_url: item.preview_url,
+      artists: item.artists.map((artist: any) => {
+        return {
+          id: artist.id,
+          name: artist.name,
+        };
+      }),
+      album: {
+        id: item.album.id,
+        name: item.album.name,
+        cover_image: item.album.images[0].url,
+        theme_color: (await getSongColor(
+          get(currentlyPlaying).song.album.cover_image,
+          get(currentlyPlaying).song.id,
+        )).hex,
+        artists: item.album.artists.map((artist: any) => {
+          return {
+            id: artist.id,
+            name: artist.name,
+          };
+        }),
+      },
+    };
+  }));
+
+  return songs;
 }
