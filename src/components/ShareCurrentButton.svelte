@@ -6,6 +6,7 @@
 
 	let lastsongId: string | undefined = undefined;
 	let color: string | undefined = undefined;
+	let disabled: boolean = false;
 
 	function updateColor() {
 		if (!get(currentlyPlaying)?.song?.id) return;
@@ -25,14 +26,18 @@
 		if (!currentSong) return;
 		currentSong.album.theme_color = color || null;
 		createPost(currentSong, null);
+		disabled = true;
 	}
 </script>
 
 <button
 	class="h-12 bg-gray-700 rounded-xl p-3 disabled:bg-gray-900 disabled:text-gray-500 flex flex-row gap-2 grow justify-center content-baseline min-w-0 transition-colors duration-300 relative overflow-clip"
 	style={color ? "background-color: " + color : ""}
-	on:click={postCurrentSong}>
-	{#if $currentlyPlaying?.song?.name}
+	on:click={postCurrentSong}
+	disabled={disabled}>
+	{#if disabled}
+		<i>Reload page</i>
+	{:else if $currentlyPlaying?.song?.name}
 		<img
 			src={$currentlyPlaying?.song?.album?.cover_image || ""}
 			alt=""
