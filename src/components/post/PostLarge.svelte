@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { identity } from "$lib/store";
-	import PostContentBasic from "./post/PostContentBasic.svelte";
+	import PostContentBasic from "./PostContentBasic.svelte";
 
 	export let post: any;
 	export let liked: boolean;

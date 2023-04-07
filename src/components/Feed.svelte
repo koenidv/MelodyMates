@@ -2,7 +2,7 @@
 	import { createGraphClient } from "$lib/graphClient";
 	import { getContextClient, gql, queryStore } from "@urql/svelte";
 	import { SyncLoader } from "svelte-loading-spinners";
-	import Post from "$components/Post.svelte";
+	import PostLarge from "$components/post/PostLarge.svelte";
 	import { querySongsLiked } from "$lib/spotify";
 	import { get } from "svelte/store";
 
@@ -61,7 +61,7 @@
 		<p>Oh no... {$posts.error.message}</p>
 	{:else}
 		{#each [...$posts.data.allPosts.data].reverse() as post}
-			<Post {post} liked={likedmap.get(post.song.id)} />
+			<PostLarge {post} liked={likedmap.get(post.song.id)} />
 		{/each}
 	{/if}
 </div>
