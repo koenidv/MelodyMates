@@ -5,6 +5,7 @@
 	import { SyncLoader } from "svelte-loading-spinners";
 	import IncomingRequest from "$components/requests/incoming.svelte";
 	import Post from "$components/Post.svelte";
+	import CloseButton from "$components/CloseButton.svelte";
 	import { querySongsLiked } from "$lib/spotify.js";
 
 	export let data;
@@ -69,7 +70,7 @@
 	}
 </script>
 
-<div class="p-2 h-full mb-[4.5rem] overflow-y-auto flex flex-col items-center gap-4 pt-8">
+<div class="p-2 h-full mb-[4.5rem] overflow-y-auto flex flex-col items-center gap-4 pt-8 relative">
 	{#if $user.fetching}
 		<div class="flex h-full w-full items-center justify-center p-8">
 			<SyncLoader color="#ffffff" />
@@ -77,6 +78,7 @@
 	{:else if $user.error}
 		<p>Oh no... {$user.error.message}</p>
 	{:else}
+		<CloseButton />
 		<!-- User info -->
 		<img
 			src={$user.data.userById.profile_image || "/icons/generic_user.svg"}

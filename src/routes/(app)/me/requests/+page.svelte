@@ -4,6 +4,7 @@
 	import { SyncLoader } from "svelte-loading-spinners";
 	import { identity } from "$lib/store";
 	import IncomingRequest from "$components/requests/incoming.svelte";
+	import CloseButton from "$components/CloseButton.svelte";
 
 	createGraphClient();
 	const contextClient = getContextClient();
@@ -92,7 +93,7 @@
 	}
 </script>
 
-<div class="p-2 h-full pb-[4.5rem] overflow-y-auto flex flex-col items-center gap-4 pt-8">
+<div class="p-2 h-full pb-[4.5rem] overflow-y-auto flex flex-col items-center gap-4 pt-8 relative">
 	{#if $requests.fetching}
 		<div class="flex h-full w-full items-center justify-center p-8">
 			<SyncLoader color="#ffffff" />
@@ -100,6 +101,7 @@
 	{:else if $requests.error}
 		<p>Oh no... {$requests.error.message}</p>
 	{:else}
+		<CloseButton />
 		<p class="text-xl">Outgoing</p>
 		<div class="rounded-lg bg-gray-900 w-full py-2">
 			{#each requestsSorted.outgoing as r}

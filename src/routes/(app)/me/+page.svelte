@@ -5,6 +5,7 @@
 	import { SyncLoader } from "svelte-loading-spinners";
 	import { get } from "svelte/store";
 	import Post from "$components/Post.svelte";
+	import CloseButton from "$components/CloseButton.svelte";
 	import { querySongsLiked } from "$lib/spotify";
 
 	createGraphClient();
@@ -75,7 +76,7 @@
 	$: $me, updateLikedMap();
 </script>
 
-<div class="p-2 h-full mb-[4.5rem] overflow-y-auto flex flex-col items-center gap-4 pt-8">
+<div class="p-2 h-full mb-[4.5rem] overflow-y-auto flex flex-col items-center gap-4 pt-8 relative">
 	{#if $me.fetching}
 		<div class="flex h-full w-full items-center justify-center p-8">
 			<SyncLoader color="#ffffff" />
@@ -83,6 +84,7 @@
 	{:else if $me.error}
 		<p>Oh no... {$me.error.message}</p>
 	{:else}
+		<CloseButton />
 		<img src={$me.data.userById.profile_image} alt="Profile" class="w-16 h-16 rounded-full" />
 		<h1 class="text-xl">
 			{$me.data.userById.profile_name}
