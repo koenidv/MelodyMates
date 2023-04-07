@@ -18,7 +18,7 @@
 </script>
 
 <div class="feed p-4 h-full pb-[4.5rem] overflow-y-auto">
-	<div class="fixed left-4 right-4 top-0 pt-4 bg-gradient-to-b from-black via-black to-transparent">
+	<div class="fixed left-4 right-4 top-0 pt-4 bg-gradient-to-b from-black via-black to-transparent z-10">
 		<input
 			type="text"
 			placeholder="Search songs"
@@ -29,7 +29,13 @@
 
 	<div id="results" class="flex flex-col gap-2 mt-[4.5rem]">
 		{#each results as song}
-			<div class="w-full rounded-lg p-2 bg-gray-800 flex flex-row gap-2">
+			<div
+				class="w-full rounded-lg p-2 bg-gray-800 flex flex-row gap-2 relative overflow-clip"
+				style="background-color: {song.album.theme_color}">
+				<img
+					src={song.album.cover_image}
+					alt=""
+					class="absolute top-0 left-0 opacity-25 h-full w-full object-cover blur-md" />
 				<img src={song.album.cover_image} alt="" class="w-12 h-12 object-cover rounded-lg" />
 				<div class="flex flex-col grow basis-0">
 					<p>{song.name}</p>
@@ -47,7 +53,7 @@
 					viewBox="0,0,255.99544,255.99544"
 					class="relative w-8 h-8 self-center">
 					<g
-						fill={song.album.theme_color}
+						fill="#ffffff"
 						fill-rule="nonzero"
 						stroke="none"
 						stroke-width="1"
