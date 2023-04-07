@@ -123,7 +123,7 @@ export function stopNowPlayingObserver() {
 }
 
 export async function playSong(song_id: string) {
-  await fetch("https://api.spotify.com/v1/me/player/play", {
+  const result = await fetch("https://api.spotify.com/v1/me/player/play", {
     method: "PUT",
     headers: {
       Authorization: "Bearer " + get(identity)?.spotify?.access_token,
@@ -132,6 +132,13 @@ export async function playSong(song_id: string) {
       uris: [`spotify:track:${song_id}`],
     }),
   });
+
+  if(result.status === 404) {
+    // No active player found
+    window.open(`spotify:track:${song_id}:play`, "_blank");
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  }
+
   await queryCurrentSong();
 }
 
