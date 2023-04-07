@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { likedUnlikeSong, pausePlayback, playSong } from "$lib/spotify";
 	import { currentlyPlaying } from "$lib/store";
-	import { is_client } from "svelte/internal";
+	import { identity } from "$lib/store";
 
 	export let post: any;
 	export let liked: boolean;
@@ -57,5 +57,19 @@
 				{/if}
 			</div>
 		</div>
+		{#if post.author && post.author.id === $identity.user.id}
+			<input
+				type="text"
+				class="w-full rounded-lg p-2 text-white placeholder-opacity-75 placeholder-white bg-black bg-opacity-[15%] focus:bg-opacity-30 border"
+				style="border-color: {post.song.album.theme_color}"
+				placeholder="Leave a note" />
+		{/if}
+		{#if post.author && (post.author.id !== $identity.user.id || post.comment)}
+			<input
+				type="text"
+				class="w-full rounded-lg p-2 text-white placeholder-opacity-75 placeholder-white bg-black bg-opacity-[15%] focus:bg-opacity-30 border"
+				style="border-color: {post.song.album.theme_color}"
+				placeholder="Send a comment" />
+		{/if}
 	</div>
 </div>
