@@ -1,0 +1,31 @@
+{
+  name: "searchUsers",
+  role: null,
+  body: Query(
+    Lambda(
+      ["username"],
+      Map(
+        Paginate(
+          Filter(
+            Documents(Collection("User")),
+            Lambda(
+              "ref",
+              Let(
+                { data: Select("data", Get(Var("ref"))) },
+                Or(
+                  ContainsStr(
+                    Select("profile_name", Var("data")),
+                    Var("username")
+                  ),
+                  ContainsStr(Select("id", Var("data")), Var("username"))
+                )
+              )
+            )
+          ),
+          { size: 12 }
+        ),
+        Lambda("doc", Get(Var("doc")))
+      )
+    )
+  )
+}
