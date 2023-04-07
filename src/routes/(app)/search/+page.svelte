@@ -13,16 +13,60 @@
 		}
 
 		results = await searchSongs(searchterm);
+		console.log(results);
 	}, 500);
 </script>
 
 <div class="feed p-4 h-full pb-[4.5rem] overflow-y-auto">
-	<input
-		type="text"
-		placeholder="Search songs"
-		bind:value={searchterm}
-		on:input={handleInput}
-		class="w-full rounded-lg p-2 text-white placeholder-opacity-75 placeholder-white bg-gray-800 h-14" />
-</div>
+	<div class="fixed left-4 right-4 top-0 pt-4 bg-gradient-to-b from-black via-black to-transparent">
+		<input
+			type="text"
+			placeholder="Search songs"
+			bind:value={searchterm}
+			on:input={handleInput}
+			class="rounded-lg p-2 text-white placeholder-opacity-75 placeholder-white bg-gray-800 h-14 w-full shadow-2xl" />
+	</div>
 
-{JSON.stringify(results)}
+	<div id="results" class="flex flex-col gap-2 mt-[4.5rem]">
+		{#each results as song}
+			<div class="w-full rounded-lg p-2 bg-gray-800 flex flex-row gap-2">
+				<img src={song.album.cover_image} alt="" class="w-12 h-12 object-cover rounded-lg" />
+				<div class="flex flex-col grow basis-0">
+					<p>{song.name}</p>
+					<p class="opacity-75">
+						{song.artists[0]?.name}
+					</p>
+				</div>
+				<!-- Share Icon -->
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					x="0px"
+					y="0px"
+					width="24"
+					height="24"
+					viewBox="0,0,255.99544,255.99544"
+					class="relative w-8 h-8 self-center">
+					<g
+						fill={song.album.theme_color}
+						fill-rule="nonzero"
+						stroke="none"
+						stroke-width="1"
+						stroke-linecap="butt"
+						stroke-linejoin="miter"
+						stroke-miterlimit="10"
+						stroke-dasharray=""
+						stroke-dashoffset="0"
+						font-family="none"
+						font-weight="none"
+						font-size="none"
+						text-anchor="none"
+						style="mix-blend-mode: normal"
+						><g transform="scale(10.66667,10.66667)"
+							><path
+								d="M12,2c-5.514,0 -10,4.486 -10,10c0,5.514 4.486,10 10,10c5.514,0 10,-4.486 10,-10c0,-5.514 -4.486,-10 -10,-10zM14.586,12l-1.586,-1.586v5.586c0,0.552 -0.448,1 -1,1v0c-0.552,0 -1,-0.448 -1,-1v-5.586l-1.586,1.586c-0.39,0.39 -1.024,0.39 -1.414,0v0c-0.39,-0.39 -0.39,-1.024 0,-1.414l3.293,-3.293c0.39,-0.39 1.024,-0.39 1.414,0l3.293,3.293c0.39,0.39 0.39,1.024 0,1.414v0c-0.39,0.39 -1.024,0.39 -1.414,0z" /></g
+						></g>
+				</svg>
+			</div>
+		{/each}
+	</div>
+</div>
