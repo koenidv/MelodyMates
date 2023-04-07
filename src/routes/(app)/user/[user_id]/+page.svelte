@@ -4,6 +4,7 @@
 	import { getContextClient, gql, mutationStore, queryStore } from "@urql/svelte";
 	import { SyncLoader } from "svelte-loading-spinners";
 	import IncomingRequest from "$components/requests/incoming.svelte";
+	import Post from "$components/Post.svelte";
 
 	export let data;
 
@@ -27,6 +28,9 @@
 								primary_artist {
 									id
 									name
+								}
+								album {
+									cover_image
 								}
 							}
 						}
@@ -55,7 +59,7 @@
 	}
 </script>
 
-<div class="p-2 h-full pb-[4.5rem] overflow-y-auto flex flex-col items-center gap-4 pt-8">
+<div class="p-2 h-full mb-[4.5rem] overflow-y-auto flex flex-col items-center gap-4 pt-8">
 	{#if $user.fetching}
 		<div class="flex h-full w-full items-center justify-center p-8">
 			<SyncLoader color="#ffffff" />
@@ -63,6 +67,7 @@
 	{:else if $user.error}
 		<p>Oh no... {$user.error.message}</p>
 	{:else}
+		<!-- User info -->
 		<img
 			src={$user.data.userById.profile_image || "/icons/generic_user.svg"}
 			alt="Profile"
@@ -70,6 +75,7 @@
 		<h1 class="text-xl">
 			{$user.data.userById.profile_name}
 		</h1>
+		<!-- Follow button -->
 		{#if $user.data.followState[0] == "request_incoming"}
 			<IncomingRequest
 				request={{
@@ -97,5 +103,11 @@
 					: "Add friend"}
 			</button>
 		{/if}
+		<!-- Posts -->
+		<div id="posts" class="feed h-full pb-[4.5rem]">
+			{#each [...$user.data.userById.posts.data].reverse() as post}
+				<Post {post} liked={false} />
+			{/each}
+		</div>
 	{/if}
 </div>

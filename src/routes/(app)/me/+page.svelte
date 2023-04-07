@@ -4,6 +4,7 @@
 	import { getContextClient, gql, queryStore } from "@urql/svelte";
 	import { SyncLoader } from "svelte-loading-spinners";
 	import { get } from "svelte/store";
+	import Post from "$components/Post.svelte";
 
 	createGraphClient();
 
@@ -40,6 +41,21 @@
 							preview_url
 						}
 					}
+					posts {
+						data {
+							song {
+								id
+								name
+								primary_artist {
+									id
+									name
+								}
+								album {
+									cover_image
+								}
+							}
+						}
+					}
 				}
 			}
 		`,
@@ -49,7 +65,7 @@
 	});
 </script>
 
-<div class="p-2 h-full pb-[4.5rem] overflow-y-auto flex flex-col items-center gap-4 pt-8">
+<div class="p-2 h-full mb-[4.5rem] overflow-y-auto flex flex-col items-center gap-4 pt-8">
 	{#if $me.fetching}
 		<div class="flex h-full w-full items-center justify-center p-8">
 			<SyncLoader color="#ffffff" />
@@ -61,8 +77,14 @@
 		<h1 class="text-xl">
 			{$me.data.userById.profile_name}
 		</h1>
-        <p>
-            {$me.data.userById.private.follows.length} friends
-        </p>
+		<p>
+			{$me.data.userById.private.follows.length} friends
+		</p>
+		<!-- Posts -->
+		<div id="posts" class="feed h-full">
+			{#each [...$me.data.userById.posts.data].reverse() as post}
+				<Post {post} liked={false} />
+			{/each}
+		</div>
 	{/if}
 </div>
