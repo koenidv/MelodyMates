@@ -25,7 +25,7 @@
 		</a>
 		<div class="flex flex-row gap-2">
 			<img src={post.song.album.cover_image} alt="Album Cover" class="w-16 h-16 rounded-lg" />
-			<div class="flex flex-col grow">
+			<div class="flex flex-col grow basis-0">
 				<p>{post.song.name}</p>
 				<p class="opacity-75">
 					{post.song.primary_artist.name}
