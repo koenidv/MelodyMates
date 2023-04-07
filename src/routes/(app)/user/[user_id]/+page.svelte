@@ -5,6 +5,7 @@
 	import { SyncLoader } from "svelte-loading-spinners";
 	import IncomingRequest from "$components/requests/incoming.svelte";
 	import Post from "$components/Post.svelte";
+	import { querySongsLiked } from "$lib/spotify.js";
 
 	export let data;
 
@@ -40,6 +41,15 @@
 			}
 		`
 	});
+
+	let likedmap = new Map();
+	function updateLikedMap() {
+		if (!$user.data) return;
+		querySongsLiked(
+			$user.data.userById.posts.data.map((post: { song: { id: any } }) => post.song.id)
+		).then((map) => (likedmap = map));
+	}
+	$: $user, updateLikedMap();
 
 	function handleFollowButtonClicked(followState: string, request_id?: string) {
 		if (followState == "none") {
@@ -106,7 +116,7 @@
 		<!-- Posts -->
 		<div id="posts" class="feed h-full pb-[4.5rem]">
 			{#each [...$user.data.userById.posts.data].reverse() as post}
-				<Post {post} liked={false} />
+				<Post {post} liked={likedmap.get(post.song.id)} />
 			{/each}
 		</div>
 	{/if}
