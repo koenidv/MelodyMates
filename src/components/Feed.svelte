@@ -20,7 +20,7 @@
 							profile_name
 							profile_image
 						}
-						comment
+						note
 						song {
 							id
 							name

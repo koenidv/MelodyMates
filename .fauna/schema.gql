@@ -53,7 +53,7 @@ type Album {
 type Post {
 	author: User! @relation(name: "user_posts")
 	song: Song! @relation(name: "post_song")
-	comment: String
+	note: String
 }
 
 type React {

@@ -61,12 +61,12 @@ function nestedObjectToArray(obj: any): any[] {
   });
 }
 
-export async function createPost(song: Song, comment: string | null) {
+export async function createPost(song: Song, note: string | null) {
   // fixme arguments should not depend on order in song object
   return await fauna().query(
     q.Call(
       q.Function("createPost"),
-      [nestedObjectToArray(song), comment],
+      [nestedObjectToArray(song), note],
     ),
   );
 }

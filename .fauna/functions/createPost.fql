@@ -3,7 +3,7 @@
   role: Role("useOrCreate_Functions"),
   body: Query(
     Lambda(
-      ["song", "comment"],
+      ["song", "note"],
       Create(Collection("Post"), {
         data: {
           author: Select(
@@ -11,7 +11,7 @@
             Get(Match(Index("user_id"), CurrentIdentity()))
           ),
           song: Call(Function("useOrCreateSong"), Var("song")),
-          comment: Var("comment")
+          note: Var("note")
         }
       })
     )
