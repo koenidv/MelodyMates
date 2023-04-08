@@ -14,10 +14,13 @@
                 { data: Select("data", Get(Var("ref"))) },
                 Or(
                   ContainsStr(
-                    Select("profile_name", Var("data")),
-                    Var("username")
+                    Casefold(Select("profile_name", Var("data"))),
+                    Casefold(Var("username"))
                   ),
-                  ContainsStr(Select("id", Var("data")), Var("username"))
+                  ContainsStr(
+                    Casefold(Select("id", Var("data"))),
+                    Casefold(Var("username"))
+                  )
                 )
               )
             )
