@@ -1,24 +1,32 @@
 <script lang="ts">
 	import { searchSongs } from "$lib/spotify";
 	import debounce from "lodash/debounce";
-	import type { Song } from "$lib/db";
+	import { searchUsers, type Song } from "$lib/db";
 
 	let searchterm = "";
-	let results: Song[] = [];
+	let results_spotify: Song[] = [];
+	let results_users: { id: string; name: string; image: string }[] = []
 
 	const handleInput = debounce(async (e) => {
 		if (!searchterm) {
-			results = [];
+			results_spotify = [];
 			return;
 		}
 
-		results = await searchSongs(searchterm);
-		console.log(results);
+		searchUsers(searchterm).then((res) => {
+			results_users = res;
+		});
+		searchSongs(searchterm).then((res) => {
+			results_spotify = res;
+		});
 	}, 500);
+
+	// todo implement song posting
 </script>
 
 <div class="feed p-4 h-full pb-[4.5rem] overflow-y-auto">
-	<div class="fixed left-4 right-4 top-0 pt-4 bg-gradient-to-b from-black via-black to-transparent z-10">
+	<div
+		class="fixed left-4 right-4 top-0 pt-4 bg-gradient-to-b from-black via-black to-transparent z-10">
 		<input
 			type="text"
 			placeholder="Search songs"
@@ -27,8 +35,24 @@
 			class="rounded-lg p-2 text-white placeholder-opacity-75 placeholder-white bg-gray-800 h-14 w-full shadow-2xl" />
 	</div>
 
-	<div id="results" class="flex flex-col gap-2 mt-[4.5rem]">
-		{#each results as song}
+	<!-- User results -->
+	<div id="users" class="flex flex-row gap-2 mt-[4.5rem] overflow-x-scroll">
+		{#each results_users as user}
+			<a href="/user/{user.id}" class="flex flex-col gap-2 bg-gray-900 w-32 min-w-[8rem] h-24 relative rounded-lg justify-end p-2">
+				{#if user.image}
+					<img
+						src={user.image}
+						alt=""
+						class="absolute top-0 left-0 opacity-50 h-full w-full object-cover blur-sm" />
+				{/if}
+				<p class="text-md z-[1]">{user.name}</p>
+			</a>
+		{/each}
+	</div>
+
+	<!-- Song results -->
+	<div id="songs" class="flex flex-col gap-2 mt-4">
+		{#each results_spotify as song}
 			<div
 				class="w-full rounded-lg p-2 bg-gray-800 flex flex-row gap-2 relative overflow-clip"
 				style="background-color: {song.album.theme_color}">
