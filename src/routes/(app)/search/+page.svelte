@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { searchSongs } from "$lib/spotify";
 	import debounce from "lodash/debounce";
-	import { searchUsers, type Song } from "$lib/db";
+	import { createPost, searchUsers, type Song } from "$lib/db";
 	import { goto } from "$app/navigation";
 
 	let searchterm = "";
@@ -21,8 +21,6 @@
 			results_spotify = res;
 		});
 	}, 500);
-
-	// todo implement song posting
 </script>
 
 <div class="feed p-4 h-full pb-[4.5rem] overflow-y-auto">
@@ -79,7 +77,12 @@
 					</p>
 				</div>
 				<!-- Share Icon -->
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<svg
+					on:click={async () => {
+						await createPost(song, null);
+						goto("/home");
+					}}
 					xmlns="http://www.w3.org/2000/svg"
 					x="0px"
 					y="0px"

@@ -201,9 +201,9 @@ export async function searchSongs(term: string) {
   const songs = await Promise.all(json.tracks.items.map(async (item: any) => {
     return {
       id: item.id,
-      isrc: item.external_ids.isrc,
-      length_ms: item.duration_ms,
       name: item.name,
+      length_ms: item.duration_ms,
+      isrc: item.external_ids.isrc,
       preview_url: item.preview_url,
       artists: item.artists.map((artist: any) => {
         return {

@@ -62,6 +62,7 @@ function nestedObjectToArray(obj: any): any[] {
 }
 
 export async function createPost(song: Song, comment: string | null) {
+  // fixme arguments should not depend on order in song object
   return await fauna().query(
     q.Call(
       q.Function("createPost"),
