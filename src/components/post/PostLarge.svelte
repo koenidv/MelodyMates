@@ -1,9 +1,32 @@
 <script lang="ts">
 	import { identity } from "$lib/store";
+	import { getContextClient, gql, mutationStore } from "@urql/svelte";
+	import debounce from "lodash/debounce";
 	import PostContentBasic from "./PostContentBasic.svelte";
 
 	export let post: any;
 	export let liked: boolean;
+
+	let notevalue = post.note || "";
+	let commentvalue = "";
+
+	const contextClient = getContextClient();
+
+	const handleNoteInput = debounce(async () => {
+		const result = mutationStore({
+			client: contextClient,
+			query: gql`
+					mutation {
+						partialUpdatePost(id: "${post.ref}", data: {
+								note: "${notevalue}"  
+						}) {
+							_id
+							note
+						}
+					}
+				`
+		});
+	}, 800);
 </script>
 
 <div
@@ -31,14 +54,20 @@
 				type="text"
 				class="w-full rounded-lg p-2 text-white placeholder-opacity-75 placeholder-white bg-black bg-opacity-[15%] focus:bg-opacity-30 border"
 				style="border-color: {post.song.album.theme_color}"
-				placeholder="Leave a note" />
+				placeholder="Leave a note"
+				maxlength="100"
+				bind:value={notevalue}
+				on:input={() => handleNoteInput()} />
+		{:else if post.note}
+			<p class="text-white opacity-75">{post.note}</p>
 		{/if}
 		{#if post.author.id !== $identity.user.id || post.comment}
 			<input
 				type="text"
 				class="w-full rounded-lg p-2 text-white placeholder-opacity-75 placeholder-white bg-black bg-opacity-[15%] focus:bg-opacity-30 border"
 				style="border-color: {post.song.album.theme_color}"
-				placeholder="Send a comment" />
+				placeholder="Send a comment"
+				bind:value={commentvalue} />
 		{/if}
 	</div>
 </div>
