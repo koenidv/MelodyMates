@@ -6,28 +6,15 @@
       ["username"],
       Map(
         Paginate(
-          Filter(
-            Documents(Collection("User")),
-            Lambda(
-              "ref",
-              Let(
-                { data: Select("data", Get(Var("ref"))) },
-                Or(
-                  ContainsStr(
-                    Casefold(Select("profile_name", Var("data"))),
-                    Casefold(Var("username"))
-                  ),
-                  ContainsStr(
-                    Casefold(Select("id", Var("data"))),
-                    Casefold(Var("username"))
-                  )
-                )
-              )
+          Union(
+            Map(
+              NGram(LowerCase(Var("username")), 3, 3),
+              Lambda("ngram", Match(Index("user_name_ngrams"), Var("ngram")))
             )
           ),
           { size: 12 }
         ),
-        Lambda("doc", Get(Var("doc")))
+        Lambda("ref", Get(Var("ref")))
       )
     )
   )

@@ -1,0 +1,14 @@
+CreateIndex({
+  name: 'user_name_ngrams',
+  source: {
+    collection: Collection('User'),
+    fields: {
+      ngrams: Query(Lambda('user', Distinct(NGram(LowerCase(Select(['data', 'profile_name'], Var('user'))), 3, 3))))
+    }
+  },
+  terms: [
+    {
+      binding: 'ngrams'
+    }
+  ]
+})
