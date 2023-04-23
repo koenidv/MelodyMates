@@ -7,39 +7,37 @@
       If(
         GTE(Length(Var("query")), 3),
         Call(Function("sortByScore"), 
-          [
-            Let(
-              { queryGrams: NGram(LowerCase(Var("query")), 3, 3) },
-              Map(
-                Paginate(
-                  Union(
-                    Map(
-                      Var("queryGrams"),
-                      Lambda("ngram", Match(Index("user_name_ngrams"), Var("ngram")))
-                    )
-                  ),
-                  { size: 12 }
-                ),
-                Lambda(
-                  "ref",
-                  Let(
-                    { 
-                      data: Get(Var("ref")),
-                      nameGrams: NGram(LowerCase(Select(["data", "profile_name"], Var("data"))), 3, 3),
-                      gramsDelta: Abs(Subtract(Count(Var("nameGrams")), Count(Var("queryGrams")))),
-                      gramMatches: Count(Intersection(Var("queryGrams"), Var("nameGrams")))
-                    },
-                    {
-                      score: Round(Divide(Multiply(Var("gramMatches"), 100), (Var("gramsDelta")))),
-                      data: Var("data")
-                    }
+          Let(
+            { queryGrams: NGram(LowerCase(Var("query")), 3, 3) },
+            Map(
+              Paginate(
+                Union(
+                  Map(
+                    Var("queryGrams"),
+                    Lambda("ngram", Match(Index("user_name_ngrams"), Var("ngram")))
                   )
+                ),
+                { size: 12 }
+              ),
+              Lambda(
+                "ref",
+                Let(
+                  { 
+                    data: Get(Var("ref")),
+                    nameGrams: NGram(LowerCase(Select(["data", "profile_name"], Var("data"))), 3, 3),
+                    gramsDelta: Abs(Subtract(Count(Var("nameGrams")), Count(Var("queryGrams")))),
+                    gramMatches: Count(Intersection(Var("queryGrams"), Var("nameGrams")))
+                  },
+                  {
+                    score: Round(Divide(Multiply(Var("gramMatches"), 100), (Var("gramsDelta")))),
+                    data: Var("data")
+                  }
                 )
               )
             )
-          ]
+          )
         ),
-        { data: [] }
+        { data: [[]] }
       )
     )
   )

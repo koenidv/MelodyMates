@@ -28,7 +28,7 @@
                       ),
                       Lambda(
                         ["nextItem", "index"],
-                        GT(
+                        LT(
                           Select("score", Var("nextItem")),
                           Select("score", Var("item"))
                         )
