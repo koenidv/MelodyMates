@@ -1,0 +1,64 @@
+{
+  name: "sortByScore",
+  role: null,
+  body: Query(
+    Lambda(
+      ["inputArray"],
+      Reduce(
+        Lambda(
+          ["result", "item"],
+          Let(
+            {
+              length: Count(Var("result")),
+              index: If(
+                Equals(0, Var("length")),
+                0,
+                Select(
+                  1,
+                  Select(
+                    0,
+                    Filter(
+                      Reduce(
+                        Lambda(
+                          ["acc", "val"],
+                          Append([[Var("val"), Count(Var("acc"))]], Var("acc"))
+                        ),
+                        [],
+                        Var("result")
+                      ),
+                      Lambda(
+                        ["nextItem", "index"],
+                        GT(
+                          Select("score", Var("nextItem")),
+                          Select("score", Var("item"))
+                        )
+                      )
+                    ),
+                    null
+                  ),
+                  Var("length")
+                )
+              )
+            },
+            Let(
+              { arr: Var("result"), index: Var("index"), item: Var("item") },
+              If(
+                Equals(-1, Var("index")),
+                Append([Var("item")], Var("arr")),
+                Let(
+                  {
+                    start: Take(Var("index"), Var("arr")),
+                    end: Drop(Var("index"), Var("arr"))
+                  },
+                  Prepend(Prepend(Var("start"), [Var("item")]), Var("end"))
+                )
+              )
+            )
+          )
+        ),
+        [],
+        Var("inputArray")
+      )
+    )
+  )
+}
