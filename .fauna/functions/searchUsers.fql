@@ -3,18 +3,39 @@
   role: null,
   body: Query(
     Lambda(
-      ["username"],
-      Map(
-        Paginate(
-          Union(
-            Map(
-              NGram(LowerCase(Var("username")), 3, 3),
-              Lambda("ngram", Match(Index("user_name_ngrams"), Var("ngram")))
-            )
+      ["query"],
+      Let(
+        { queryGrams: NGram(LowerCase(Var("query")), 3, 3) },
+        Map(
+          Paginate(
+            Union(
+              Map(
+                Var("queryGrams"),
+                Lambda("ngram", Match(Index("user_name_ngrams"), Var("ngram")))
+              )
+            ),
+            { size: 12 }
           ),
-          { size: 12 }
-        ),
-        Lambda("ref", Get(Var("ref")))
+          Lambda(
+            "ref",
+            Let(
+              { data: Get(Var("ref")) },
+              {
+                score: Count(
+                  Intersection(
+                    NGram(
+                      LowerCase(
+                        Select(["data", "profile_name"], Var("data"))
+                        ), 3, 3
+                    ),
+                    Var("queryGrams")
+                  )
+                ),
+                data: Var("data")
+              }
+            )
+          )
+        )
       )
     )
   )
