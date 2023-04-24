@@ -84,13 +84,11 @@ export async function searchUsers(term: string) {
   const result: any = await fauna().query(
     q.Call(
       q.Function("searchUsers"),
-      [term]
+      term
     )
   )
 
-  console.log(result.data)
-
-  return result.data.map((doc: any) => {
+  return result.data[0].map(({data: doc}: any) => {
     return {
       id: doc.data.id,
       name: doc.data.profile_name,

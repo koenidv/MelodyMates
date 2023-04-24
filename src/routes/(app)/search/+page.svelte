@@ -16,11 +16,20 @@
 
 		searchUsers(searchterm).then((res) => {
 			results_users = res;
+			console.log("this");
+			console.log(results_users);
 		});
 		searchSongs(searchterm).then((res) => {
 			results_spotify = res;
 		});
 	}, 500);
+
+	function clearResultsIfNecessary() {
+		if (searchterm) return;
+		results_spotify = [];
+		results_users = [];
+	}
+	$: searchterm, clearResultsIfNecessary();
 </script>
 
 <div class="feed p-4 h-full pb-[4.5rem] overflow-y-auto">
