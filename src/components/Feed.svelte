@@ -2,17 +2,19 @@
 	import { createGraphClient } from "$lib/graphClient";
 	import { getContextClient, gql, queryStore } from "@urql/svelte";
 	import { SyncLoader } from "svelte-loading-spinners";
-	import PostFeed from "$components/post/PostFeed.svelte";
 	import { querySongsLiked } from "$lib/spotify";
+	import PostFeed from "$components/post/PostFeed.svelte";
+	import InfiniteScroll from "svelte-infinite-scroll";
 
 	createGraphClient();
 	const client = getContextClient();
 
-	let paginationCursor;
+	let paginationCursor: string | undefined = undefined;
+	$: posts = [] as any[];
 
 	const postsQuery = gql`
-		query {
-			allPostsPaginated(_size: 100, _cursor: ${paginationCursor || "null"}) {
+		query ($paginationCursor: String) {
+			allPostsPaginated(_size: 8, _cursor: $paginationCursor) {
 				data {
 					ref: _id
 					author {
@@ -47,35 +49,54 @@
 						}
 					}
 				}
+				after
 			}
 		}
 	`;
 
-	const posts = queryStore({
+	$: postsPage = queryStore({
 		client: client,
-		query: postsQuery
+		query: postsQuery,
+		variables: { paginationCursor }
 	});
+
+	$: $postsPage,
+		(() => {
+			if ($postsPage.data) {
+				console.log("updating");
+				posts = [...posts, ...$postsPage.data.allPostsPaginated.data];
+			}
+		})();
+
+	function loadNextPostsPage() {
+		paginationCursor = $postsPage.data.allPostsPaginated.after;
+	}
 
 	let likedmap = new Map();
 	function updateLikedMap() {
-		if (!$posts.data) return;
-		querySongsLiked(
-			$posts.data.allPostsPaginated.data.map((post: { song: { id: any } }) => post.song.id)
-		).then((map) => (likedmap = map));
+		if (posts.length == 0) return;
+		querySongsLiked(posts.map((post: { song: { id: any } }) => post.song.id)).then(
+			(map) => (likedmap = new Map(...likedmap, ...map))
+		);
 	}
-	$: $posts, updateLikedMap();
+	$: $postsPage, updateLikedMap();
 </script>
 
 <div class="feed p-2 h-full pb-[4.5rem] overflow-y-auto">
-	{#if $posts.fetching}
+	{#if $postsPage.fetching}
 		<div class="flex h-full w-full items-center justify-center p-8">
 			<SyncLoader color="#ffffff" />
 		</div>
-	{:else if $posts.error}
-		<p>Oh no... {$posts.error.message}</p>
+	{:else if $postsPage.error}
+		<p>Oh no... {$postsPage.error.message}</p>
 	{:else}
-		{#each $posts.data.allPostsPaginated.data as post}
+		{#each posts as post}
 			<PostFeed {post} liked={likedmap.get(post.song.id)} />
 		{/each}
+		<InfiniteScroll
+			threshold={400}
+			on:loadMore={() => {
+				loadNextPostsPage();
+			}} />
 	{/if}
 </div>
