@@ -1,0 +1,12 @@
+CreateIndex({
+    name: "posts_by_date",
+    source: Collection("Post"),
+    values: [
+        {
+        field: ["ts"],
+        reverse: true
+        },
+        {
+        field: ["ref"]
+        }
+    ],

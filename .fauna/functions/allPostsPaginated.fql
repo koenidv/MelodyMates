@@ -1,0 +1,24 @@
+{
+  name: "allPostsPaginated",
+  role: null,
+  body: Query(
+    Lambda(
+      ["size", "after", "before"],
+      Let(
+        {
+          match: Match(Index("posts_by_date")),
+          page: If(
+            Equals(Var("before"), null),
+            If(
+              Equals(Var("after"), null),
+              Paginate(Var("match"), { size: Var("size") }),
+              Paginate(Var("match"), { after: Var("after"), size: Var("size") })
+            ),
+            Paginate(Var("match"), { before: Var("before"), size: Var("size") })
+          )
+        },
+        Map(Var("page"), Lambda("values", Get(Select(1, Var("values")))))
+      )
+    )
+  )
+}

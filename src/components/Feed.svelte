@@ -6,56 +6,61 @@
 	import { querySongsLiked } from "$lib/spotify";
 
 	createGraphClient();
+	const client = getContextClient();
 
-	const posts = queryStore({
-		client: getContextClient(),
-		query: gql`
-			query {
-				allPosts {
-					data {
-						ref: _id
-						author {
-							id
-							profile_name
-							profile_image
-						}
-						note
-						song {
+	let paginationCursor;
+
+	const postsQuery = gql`
+		query {
+			allPostsPaginated(_size: 100, _cursor: ${paginationCursor || "null"}) {
+				data {
+					ref: _id
+					author {
+						id
+						profile_name
+						profile_image
+					}
+					note
+					song {
+						id
+						name
+						length_ms
+						primary_artist {
 							id
 							name
-							length_ms
-							primary_artist {
-								id
-								name
-							}
-							album {
-								id
-								name
-								cover_image
-								theme_color
-							}
 						}
-						replies {
-							data {
-								author {
-									id
-									profile_name
-									profile_image
-								}
-								comment
+						album {
+							id
+							name
+							cover_image
+							theme_color
+						}
+					}
+					replies {
+						data {
+							author {
+								id
+								profile_name
+								profile_image
 							}
+							comment
 						}
 					}
 				}
 			}
-		`
+		}
+	`;
+
+	const posts = queryStore({
+		client: client,
+		query: postsQuery
 	});
 
 	let likedmap = new Map();
 	function updateLikedMap() {
 		if (!$posts.data) return;
 		querySongsLiked(
-			$posts.data.allPosts.data.map((post: { song: { id: any } }) => post.song.id)
+			$posts.data.allPostsPaginated.data.map((post: { song: { id: any } }) => post.song.id)
 		).then((map) => (likedmap = map));
 	}
 	$: $posts, updateLikedMap();
@@ -69,7 +74,7 @@
 	{:else if $posts.error}
 		<p>Oh no... {$posts.error.message}</p>
 	{:else}
-		{#each [...$posts.data.allPosts.data].reverse() as post}
+		{#each $posts.data.allPostsPaginated.data as post}
 			<PostFeed {post} liked={likedmap.get(post.song.id)} />
 		{/each}
 	{/if}

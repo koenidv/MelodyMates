@@ -73,6 +73,7 @@ type Reply {
 
 type Query {
 	allPosts: [Post!]
+	allPostsPaginated: [Post!] @resolver(name: "allPostsPaginated", paginated: true)
 	allUsers: [User!]
 	allFollowRequests: [FollowRequest!]
 	userById(id: String!): User
