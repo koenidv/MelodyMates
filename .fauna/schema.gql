@@ -54,16 +54,18 @@ type Post {
 	author: User! @relation(name: "user_posts")
 	song: Song! @relation(name: "post_song")
 	note: String
+	replies: [Reply!]! @relation(name: "post_replies")
+	reacts: [React!]! @relation(name: "post_reacts")
 }
 
 type React {
-	post: Post!
+	post: Post! @relation(name: "post_reacts")
 	author: User!
 	emoji: String!
 }
 
 type Reply {
-	post: Post!
+	post: Post! @relation(name: "post_replies")
 	author: User!
 	comment: String
 	song: Song
