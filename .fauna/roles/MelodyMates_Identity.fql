@@ -1,0 +1,660 @@
+{
+  ref: Role("MelodyMates_Identity"),
+  ts: 1682364464060000,
+  name: "MelodyMates_Identity",
+  privileges: [
+    {
+      resource: Collection("User"),
+      actions: {
+        read: true,
+        write: Query(
+          Lambda(
+            ["oldData", "newData"],
+            And(
+              Equals(CurrentIdentity(), Select(["data", "id"], Var("oldData"))),
+              Equals(
+                Select(["data", "id"], Var("oldData")),
+                Select(["data", "id"], Var("newData"))
+              )
+            )
+          )
+        ),
+        create: Query(
+          Lambda(
+            "values",
+            Equals(CurrentIdentity(), Select(["data", "id"], Var("values")))
+          )
+        ),
+        delete: Query(
+          Lambda(
+            "ref",
+            Equals(CurrentIdentity(), Select(["data", "id"], Get(Var("ref"))))
+          )
+        ),
+        history_read: false,
+        history_write: false,
+        unrestricted_read: false
+      }
+    },
+    {
+      resource: Collection("Song"),
+      actions: {
+        read: true,
+        write: false,
+        create: false,
+        delete: false,
+        history_read: false,
+        history_write: false,
+        unrestricted_read: false
+      }
+    },
+    {
+      resource: Index("song_id"),
+      actions: {
+        unrestricted_read: false,
+        read: true
+      }
+    },
+    {
+      resource: Index("user_id"),
+      actions: {
+        unrestricted_read: false,
+        read: true
+      }
+    },
+    {
+      resource: Ref(Ref("functions"), "useOrCreateAlbum"),
+      actions: {
+        call: true
+      }
+    },
+    {
+      resource: Collection("Album"),
+      actions: {
+        read: true,
+        write: false,
+        create: false,
+        delete: false,
+        history_read: false,
+        history_write: false,
+        unrestricted_read: false
+      }
+    },
+    {
+      resource: Collection("Artist"),
+      actions: {
+        read: true,
+        write: false,
+        create: false,
+        delete: false,
+        history_read: false,
+        history_write: false,
+        unrestricted_read: false
+      }
+    },
+    {
+      resource: Ref(Ref("functions"), "useOrCreateArtist"),
+      actions: {
+        call: true
+      }
+    },
+    {
+      resource: Ref(Ref("functions"), "useOrCreateSong"),
+      actions: {
+        call: true
+      }
+    },
+    {
+      resource: Ref(Ref("functions"), "createPost"),
+      actions: {
+        call: true
+      }
+    },
+    {
+      resource: Collection("Post"),
+      actions: {
+        read: Query(
+          Lambda(
+            "ref",
+            Or(
+              Equals(
+                Select(
+                  ["ref"],
+                  Get(Match(Index("user_id"), CurrentIdentity()))
+                ),
+                Select(["data", "author"], Get(Var("ref")))
+              ),
+              ContainsValue(
+                Select(["data", "author"], Get(Var("ref"))),
+                Select(
+                  ["data", "follows"],
+                  Get(
+                    Select(
+                      ["data", "private"],
+                      Get(Match(Index("user_id"), CurrentIdentity()))
+                    )
+                  )
+                )
+              )
+            )
+          )
+        ),
+        write: Query(
+          Lambda(
+            ["olddata", "newdata"],
+            All([
+              Equals(
+                Select("ref", Get(Match(Index("user_id"), CurrentIdentity()))),
+                Select(["data", "author"], Var("olddata"))
+              ),
+              Equals(
+                Select(["data", "author"], Var("olddata")),
+                Select(["data", "author"], Var("newdata"))
+              ),
+              Equals(
+                Select(["data", "song"], Var("olddata")),
+                Select(["data", "song"], Var("newdata"))
+              ),
+              LTE(Length(Select(["data", "note"], Var("newdata"))), 100)
+            ])
+          )
+        ),
+        create: Query(
+          Lambda(
+            "values",
+            Equals(
+              Select("ref", Get(Match(Index("user_id"), CurrentIdentity()))),
+              Select(["data", "author"], Var("values"))
+            )
+          )
+        ),
+        delete: Query(
+          Lambda(
+            "ref",
+            Equals(
+              Select("ref", Get(Match(Index("user_id"), CurrentIdentity()))),
+              Select(["data", "author"], Get(Var("ref")))
+            )
+          )
+        ),
+        history_read: false,
+        history_write: false,
+        unrestricted_read: false
+      }
+    },
+    {
+      resource: Index("allPosts"),
+      actions: {
+        unrestricted_read: false,
+        read: true
+      }
+    },
+    {
+      resource: Index("artist_id"),
+      actions: {
+        unrestricted_read: false,
+        read: true
+      }
+    },
+    {
+      resource: Index("album_id"),
+      actions: {
+        unrestricted_read: false,
+        read: true
+      }
+    },
+    {
+      resource: Index("allUsers"),
+      actions: {
+        unrestricted_read: false,
+        read: false
+      }
+    },
+    {
+      resource: Index("artist_albums_by_artist"),
+      actions: {
+        unrestricted_read: false,
+        read: true
+      }
+    },
+    {
+      resource: Index("artist_albums_by_album"),
+      actions: {
+        unrestricted_read: false,
+        read: true
+      }
+    },
+    {
+      resource: Index("artist_songs_by_artist"),
+      actions: {
+        unrestricted_read: false,
+        read: true
+      }
+    },
+    {
+      resource: Index("artist_albums_by_album_and_artist"),
+      actions: {
+        unrestricted_read: false,
+        read: true
+      }
+    },
+    {
+      resource: Index("artist_songs_by_artist_and_song"),
+      actions: {
+        unrestricted_read: false,
+        read: true
+      }
+    },
+    {
+      resource: Index("artist_songs_by_song"),
+      actions: {
+        unrestricted_read: false,
+        read: true
+      }
+    },
+    {
+      resource: Index("user_posts_by_user"),
+      actions: {
+        unrestricted_read: false,
+        read: true
+      }
+    },
+    {
+      resource: Index("post_song_by_song"),
+      actions: {
+        unrestricted_read: false,
+        read: true
+      }
+    },
+    {
+      resource: Collection("PrivateUserData"),
+      actions: {
+        read: Query(
+          Lambda(
+            "ref",
+            Equals(
+              Select(["ref"], Get(Match(Index("user_id"), CurrentIdentity()))),
+              Select(["data", "user"], Get(Var("ref")))
+            )
+          )
+        ),
+        write: false,
+        create: Query(
+          Lambda(
+            "values",
+            Equals(
+              Select(["ref"], Get(Match(Index("user_id"), CurrentIdentity()))),
+              Select(["data", "user"], Var("values"))
+            )
+          )
+        ),
+        delete: Query(
+          Lambda(
+            "ref",
+            Equals(
+              Select(["ref"], Get(Match(Index("user_id"), CurrentIdentity()))),
+              Select(["data", "user"], Get(Var("ref")))
+            )
+          )
+        ),
+        history_read: false,
+        history_write: false,
+        unrestricted_read: false
+      }
+    },
+    {
+      resource: Index("user_private_by_privateUserData"),
+      actions: {
+        unrestricted_read: false,
+        read: true
+      }
+    },
+    {
+      resource: Index("userById"),
+      actions: {
+        unrestricted_read: false,
+        read: true
+      }
+    },
+    {
+      resource: Collection("artist_songs"),
+      actions: {
+        read: true,
+        write: false,
+        create: false,
+        delete: false,
+        history_read: false,
+        history_write: false,
+        unrestricted_read: false
+      }
+    },
+    {
+      resource: Collection("artist_albums"),
+      actions: {
+        read: true,
+        write: false,
+        create: false,
+        delete: false,
+        history_read: false,
+        history_write: false,
+        unrestricted_read: false
+      }
+    },
+    {
+      resource: Ref(Ref("functions"), "followState"),
+      actions: {
+        call: true
+      }
+    },
+    {
+      resource: Collection("FollowRequest"),
+      actions: {
+        read: Query(
+          Lambda(
+            "ref",
+            Or(
+              Equals(
+                Select("ref", Get(Match(Index("user_id"), CurrentIdentity()))),
+                Select(["data", "from"], Get(Var("ref")))
+              ),
+              Equals(
+                Select("ref", Get(Match(Index("user_id"), CurrentIdentity()))),
+                Select(["data", "recipient"], Get(Var("ref")))
+              )
+            )
+          )
+        ),
+        write: false,
+        create: Query(
+          Lambda(
+            "values",
+            Equals(
+              Select("ref", Get(Match(Index("user_id"), CurrentIdentity()))),
+              Select(["data", "from"], Var("values"))
+            )
+          )
+        ),
+        delete: Query(
+          Lambda(
+            "ref",
+            Or(
+              Equals(
+                Select("ref", Get(Match(Index("user_id"), CurrentIdentity()))),
+                Select(["data", "from"], Get(Var("ref")))
+              ),
+              Equals(
+                Select("ref", Get(Match(Index("user_id"), CurrentIdentity()))),
+                Select(["data", "recipient"], Get(Var("ref")))
+              )
+            )
+          )
+        ),
+        history_read: false,
+        history_write: false,
+        unrestricted_read: false
+      }
+    },
+    {
+      resource: Ref(Ref("functions"), "createFollowRequest"),
+      actions: {
+        call: true
+      }
+    },
+    {
+      resource: Index("allFollowRequests"),
+      actions: {
+        unrestricted_read: false,
+        read: true
+      }
+    },
+    {
+      resource: Index("artistsById"),
+      actions: {
+        unrestricted_read: false,
+        read: true
+      }
+    },
+    {
+      resource: Ref(Ref("functions"), "acceptFollowRequest"),
+      actions: {
+        call: true
+      }
+    },
+    {
+      resource: Ref(Ref("functions"), "createUser"),
+      actions: {
+        call: true
+      }
+    },
+    {
+      resource: Index("unique_followrequest"),
+      actions: {
+        unrestricted_read: false,
+        read: true
+      }
+    },
+    {
+      resource: Ref(Ref("functions"), "searchUsers"),
+      actions: {
+        call: true
+      }
+    },
+    {
+      resource: Index("user_name_ngrams"),
+      actions: {
+        unrestricted_read: false,
+        read: true
+      }
+    },
+    {
+      resource: Ref(Ref("functions"), "sortByScore"),
+      actions: {
+        call: true
+      }
+    },
+    {
+      resource: Collection("Reply"),
+      actions: {
+        read: Query(
+          Lambda(
+            "ref",
+            Or(
+              Equals(
+                Select(
+                  ["ref"],
+                  Get(Match(Index("user_id"), CurrentIdentity()))
+                ),
+                Select(
+                  ["data", "author"],
+                  Get(Select(["data", "post"], Get(Var("ref"))))
+                )
+              ),
+              ContainsValue(
+                Select(
+                  ["data", "author"],
+                  Get(Select(["data", "post"], Get(Var("ref"))))
+                ),
+                Select(
+                  ["data", "follows"],
+                  Get(
+                    Select(
+                      ["data", "private"],
+                      Get(Match(Index("user_id"), CurrentIdentity()))
+                    )
+                  )
+                )
+              )
+            )
+          )
+        ),
+        write: false,
+        create: Query(
+          Lambda(
+            "values",
+            And(
+              Equals(
+                Select("ref", Get(Match(Index("user_id"), CurrentIdentity()))),
+                Select(["data", "author"], Var("values"))
+              ),
+              Or(
+                Equals(
+                  Select(
+                    ["ref"],
+                    Get(Match(Index("user_id"), CurrentIdentity()))
+                  ),
+                  Select(
+                    ["data", "author"],
+                    Get(Select(["data", "post"], Var("values")))
+                  )
+                ),
+                ContainsValue(
+                  Select(
+                    ["data", "author"],
+                    Get(Select(["data", "post"], Var("values")))
+                  ),
+                  Select(
+                    ["data", "follows"],
+                    Get(
+                      Select(
+                        ["data", "private"],
+                        Get(Match(Index("user_id"), CurrentIdentity()))
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        ),
+        delete: Query(
+          Lambda(
+            "ref",
+            Equals(
+              Select("ref", Get(Match(Index("user_id"), CurrentIdentity()))),
+              Select(["data", "author"], Get(Var("ref")))
+            )
+          )
+        ),
+        history_read: false,
+        history_write: false,
+        unrestricted_read: false
+      }
+    },
+    {
+      resource: Index("post_reacts_by_post"),
+      actions: {
+        unrestricted_read: false,
+        read: true
+      }
+    },
+    {
+      resource: Index("post_replies_by_post"),
+      actions: {
+        unrestricted_read: false,
+        read: true
+      }
+    },
+    {
+      resource: Ref(Ref("functions"), "allPostsPaginated"),
+      actions: {
+        call: true
+      }
+    },
+    {
+      resource: Index("posts_by_date"),
+      actions: {
+        unrestricted_read: false,
+        read: true
+      }
+    },
+    {
+      resource: Collection("React"),
+      actions: {
+        read: Query(
+          Lambda(
+            "ref",
+            Or(
+              Equals(
+                Select(
+                  ["ref"],
+                  Get(Match(Index("user_id"), CurrentIdentity()))
+                ),
+                Select(
+                  ["data", "author"],
+                  Get(Select(["data", "post"], Get(Var("ref"))))
+                )
+              ),
+              ContainsValue(
+                Select(
+                  ["data", "author"],
+                  Get(Select(["data", "post"], Get(Var("ref"))))
+                ),
+                Select(
+                  ["data", "follows"],
+                  Get(
+                    Select(
+                      ["data", "private"],
+                      Get(Match(Index("user_id"), CurrentIdentity()))
+                    )
+                  )
+                )
+              )
+            )
+          )
+        ),
+        write: false,
+        create: Query(
+          Lambda(
+            "values",
+            And(
+              Equals(
+                Select("ref", Get(Match(Index("user_id"), CurrentIdentity()))),
+                Select(["data", "author"], Var("values"))
+              ),
+              Or(
+                Equals(
+                  Select(
+                    ["ref"],
+                    Get(Match(Index("user_id"), CurrentIdentity()))
+                  ),
+                  Select(
+                    ["data", "author"],
+                    Get(Select(["data", "post"], Var("values")))
+                  )
+                ),
+                ContainsValue(
+                  Select(
+                    ["data", "author"],
+                    Get(Select(["data", "post"], Var("values")))
+                  ),
+                  Select(
+                    ["data", "follows"],
+                    Get(
+                      Select(
+                        ["data", "private"],
+                        Get(Match(Index("user_id"), CurrentIdentity()))
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        ),
+        delete: Query(
+          Lambda(
+            "ref",
+            Equals(
+              Select("ref", Get(Match(Index("user_id"), CurrentIdentity()))),
+              Select(["data", "author"], Get(Var("ref")))
+            )
+          )
+        ),
+        history_read: false,
+        history_write: false,
+        unrestricted_read: false
+      }
+    }
+  ],
+  membership: []
+}

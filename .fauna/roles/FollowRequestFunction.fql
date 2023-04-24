@@ -1,0 +1,65 @@
+{
+  ref: Role("FollowRequestFunction"),
+  ts: 1680711582870000,
+  name: "FollowRequestFunction",
+  privileges: [
+    {
+      resource: Collection("FollowRequest"),
+      actions: {
+        read: true,
+        write: false,
+        create: false,
+        delete: true,
+        history_read: false,
+        history_write: false,
+        unrestricted_read: false
+      }
+    },
+    {
+      resource: Collection("PrivateUserData"),
+      actions: {
+        read: true,
+        write: true,
+        create: false,
+        delete: false,
+        history_read: false,
+        history_write: false,
+        unrestricted_read: false
+      }
+    },
+    {
+      resource: Collection("User"),
+      actions: {
+        read: true,
+        write: false,
+        create: false,
+        delete: false,
+        history_read: false,
+        history_write: false,
+        unrestricted_read: false
+      }
+    },
+    {
+      resource: Index("user_id"),
+      actions: {
+        unrestricted_read: false,
+        read: true
+      }
+    },
+    {
+      resource: Index("incoming_request_by_user"),
+      actions: {
+        unrestricted_read: false,
+        read: true
+      }
+    },
+    {
+      resource: Index("userById"),
+      actions: {
+        unrestricted_read: false,
+        read: false
+      }
+    }
+  ],
+  membership: []
+}

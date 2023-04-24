@@ -1,0 +1,122 @@
+{
+  ref: Role("useOrCreate_Functions"),
+  ts: 1675773676900000,
+  name: "useOrCreate_Functions",
+  privileges: [
+    {
+      resource: Collection("Album"),
+      actions: {
+        read: true,
+        write: false,
+        create: true,
+        delete: false,
+        history_read: false,
+        history_write: false,
+        unrestricted_read: false
+      }
+    },
+    {
+      resource: Collection("Song"),
+      actions: {
+        read: true,
+        write: false,
+        create: true,
+        delete: false,
+        history_read: false,
+        history_write: false,
+        unrestricted_read: false
+      }
+    },
+    {
+      resource: Collection("Artist"),
+      actions: {
+        read: true,
+        write: false,
+        create: true,
+        delete: false,
+        history_read: false,
+        history_write: false,
+        unrestricted_read: false
+      }
+    },
+    {
+      resource: Index("song_id"),
+      actions: {
+        unrestricted_read: false,
+        read: true
+      }
+    },
+    {
+      resource: Index("artist_id"),
+      actions: {
+        unrestricted_read: false,
+        read: true
+      }
+    },
+    {
+      resource: Index("album_id"),
+      actions: {
+        unrestricted_read: false,
+        read: true
+      }
+    },
+    {
+      resource: Ref(Ref("functions"), "useOrCreateArtist"),
+      actions: {
+        call: true
+      }
+    },
+    {
+      resource: Ref(Ref("functions"), "useOrCreateAlbum"),
+      actions: {
+        call: true
+      }
+    },
+    {
+      resource: Ref(Ref("functions"), "useOrCreateSong"),
+      actions: {
+        call: true
+      }
+    },
+    {
+      resource: Index("user_id"),
+      actions: {
+        unrestricted_read: false,
+        read: true
+      }
+    },
+    {
+      resource: Collection("User"),
+      actions: {
+        read: true,
+        write: false,
+        create: false,
+        delete: false,
+        history_read: false,
+        history_write: false,
+        unrestricted_read: false
+      }
+    },
+    {
+      resource: Collection("Post"),
+      actions: {
+        read: false,
+        write: false,
+        create: Query(
+          Lambda(
+            "values",
+            Equals(
+              Select("ref", Get(Match(Index("user_id"), CurrentIdentity()))),
+              Select(["data", "author"], Var("values"))
+            )
+          )
+        ),
+        delete: false,
+        history_read: false,
+        history_write: false,
+        unrestricted_read: false
+      }
+    }
+  ],
+  membership: []
+}
