@@ -45,6 +45,7 @@
 					}
 					posts {
 						data {
+							ref: _id
 							song {
 								id
 								name
@@ -54,6 +55,7 @@
 								}
 								album {
 									cover_image
+									theme_color
 								}
 							}
 						}

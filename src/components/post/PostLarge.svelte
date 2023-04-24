@@ -56,7 +56,7 @@
 	];
 </script>
 
-<div
+<a href="/post/{post.ref}"
 	class="rounded-lg mb-2 relative overflow-clip bg-gray-800 snap-both snap-mandatory snap-center"
 	style="background-color: {post.song.album.theme_color}">
 	<div class="bg-black bg-opacity-40">
@@ -112,4 +112,4 @@
 			{/each}
 		</div>
 	</div>
-</div>
+</a>
