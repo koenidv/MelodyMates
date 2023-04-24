@@ -90,8 +90,18 @@
 				{:else if post.note}
 					<p class="text-white opacity-75">{post.note}</p>
 				{/if}
-				{#if post.author.id !== $identity.user.id || post.note}
-					<a href="/post/{post.ref}" class="text-white opacity-75 underline">Send a reply...</a>
+				{#if (post.author.id !== $identity.user.id || post.note) && post.replies }
+					<a href="/post/{post.ref}" class="text-white opacity-75 p-2 bg-black bg-opacity-[15%] rounded-lg">
+						{#if post.replies.data.length > 0}
+							{#if post.replies.data.length === 1}
+								See 1 reply
+							{:else}
+								See {post.replies.data.length} replies
+							{/if}
+						{:else}
+							No replies yet - Send a reply!
+						{/if}
+					</a>
 				{/if}
 			</div>
 		</div>

@@ -5,8 +5,7 @@
 	export let liked: boolean;
 </script>
 
-<a
-	href="/post/{post.ref}"
+<div
 	style="background-color: {post.song.album.theme_color}"
 	class="block rounded-lg p-3 mb-2 relative overflow-clip">
 	<img
@@ -16,4 +15,4 @@
 	<div class="relative flex flex-col gap-2">
 		<PostContentBasic {post} {liked} />
 	</div>
-</a>
+</div>

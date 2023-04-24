@@ -7,13 +7,15 @@
 </script>
 
 <div class="flex flex-row gap-2">
-	<img src={post.song.album.cover_image} alt="Album Cover" class="w-16 h-16 rounded-lg" />
-	<div class="flex flex-col grow basis-0">
+	<a href="/post/{post.ref}">
+		<img src={post.song.album.cover_image} alt="Album Cover" class="w-16 h-16 rounded-lg" />
+	</a>
+	<a href="/post/{post.ref}" class="flex flex-col grow basis-0">
 		<p>{post.song.name}</p>
 		<p class="opacity-75">
 			{post.song.primary_artist.name}
 		</p>
-	</div>
+	</a>
 	<div class="flex items-center pr-2 gap-3">
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<img

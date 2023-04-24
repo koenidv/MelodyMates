@@ -35,6 +35,16 @@
 								theme_color
 							}
 						}
+						replies {
+							data {
+								author {
+									id
+									profile_name
+									profile_image
+								}
+								comment
+							}
+						}
 					}
 				}
 			}
