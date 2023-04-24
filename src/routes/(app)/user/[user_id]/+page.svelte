@@ -4,7 +4,7 @@
 	import { getContextClient, gql, mutationStore, queryStore } from "@urql/svelte";
 	import { SyncLoader } from "svelte-loading-spinners";
 	import IncomingRequest from "$components/requests/incoming.svelte";
-	import PostSmall from "$components/post/PostLarge.svelte";
+	import PostSmall from "$components/post/PostFeed.svelte";
 	import CloseButton from "$components/CloseButton.svelte";
 	import { querySongsLiked } from "$lib/spotify.js";
 
