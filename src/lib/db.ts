@@ -84,15 +84,25 @@ export async function searchUsers(term: string) {
   const result: any = await fauna().query(
     q.Call(
       q.Function("searchUsers"),
-      term
-    )
-  )
+      term,
+    ),
+  );
 
-  return result.data[0].map(({data: doc}: any) => {
+  return result.data[0].map(({ data: doc }: any) => {
     return {
       id: doc.data.id,
       name: doc.data.profile_name,
       image: doc.data.profile_image,
-    }
+    };
   });
+}
+
+export async function getRefIdForUserId(user_id: string) {
+  const result: any = await fauna().query(
+    q.Select(
+      ["ref", "id"],
+      q.Get(q.Match(q.Index("user_id"), user_id)),
+    ),
+  );
+  return result;
 }

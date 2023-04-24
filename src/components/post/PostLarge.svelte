@@ -3,6 +3,8 @@
 	import { getContextClient, gql, mutationStore } from "@urql/svelte";
 	import debounce from "lodash/debounce";
 	import PostContentBasic from "./PostContentBasic.svelte";
+	import { src_url_equal } from "svelte/internal";
+	import { getRefIdForUserId } from "$lib/db";
 
 	export let post: any;
 	export let liked: boolean;
@@ -26,6 +28,25 @@
 				`
 		});
 	}, 800);
+
+	const handleSendReply = async () => {
+		const refid = await getRefIdForUserId($identity.user.id);
+		const result = mutationStore({
+			client: contextClient,
+			query: gql`
+					mutation {
+						createReply(data: {
+							post: { connect: "${post.ref}" },
+							author: { connect: "${refid}" },
+							comment: "${commentvalue}"
+						}) {
+							_id
+						}
+					}
+				`
+		});
+		commentvalue = "";
+	};
 </script>
 
 <div class="rounded-lg mb-2 relative overflow-clip snap-both snap-mandatory snap-center">
@@ -62,12 +83,24 @@
 				<p class="text-white opacity-75">{post.note}</p>
 			{/if}
 			{#if post.author.id !== $identity.user.id || post.note}
-				<input
-					type="text"
-					class="w-full rounded-lg p-2 text-white placeholder-opacity-75 placeholder-white bg-black bg-opacity-[15%] focus:bg-opacity-30 border"
-					style="border-color: {post.song.album.theme_color}"
-					placeholder="Send a reply"
-					bind:value={commentvalue} />
+				<div
+					class="flex flex-row w-full rounded-lg text-white placeholder-opacity-75 placeholder-white bg-black bg-opacity-[15%] focus:bg-opacity-30 border"
+					style="border-color: {post.song.album.theme_color}">
+					<input
+						type="text"
+						class="w-full rounded-lg p-2 text-white placeholder-opacity-75 placeholder-white bg-transparent"
+						style="border-color: {post.song.album.theme_color}"
+						placeholder="Send a reply"
+						bind:value={commentvalue}
+						on:keypress={(e) => {
+							if (e.charCode == 13) handleSendReply();
+						}} />
+					{#if commentvalue.length > 0}
+						<button
+							class="rounded-lg px-4 bg-black bg-opacity-0 hover:bg-opacity-30 transition-colors"
+							on:click={handleSendReply}>Send</button>
+					{/if}
+				</div>
 			{/if}
 		</div>
 	</div>
