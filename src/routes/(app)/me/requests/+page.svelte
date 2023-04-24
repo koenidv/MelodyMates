@@ -103,25 +103,33 @@
 	{:else}
 		<CloseButton />
 		<p class="text-xl">Outgoing</p>
-		<div class="rounded-lg bg-gray-900 w-full py-2">
-			{#each requestsSorted.outgoing as r}
-				<div class="px-4 py-2 flex flex-row items-center gap-3">
-					<img
-						src={r.recipient.profile_image || "/icons/generic_user.svg"}
-						alt="Profile"
-						class="w-6 h-6 rounded-full bg-gray-800" />
-					<a href="/user/{r.recipient.id}" class="grow">
-						<p class="text-md">{r.recipient.profile_name}</p>
-					</a>
-					<button class="opacity-60" on:click={() => deleteRequest(r)}>Cancel</button>
-				</div>
-			{/each}
-		</div>
+		{#if requestsSorted.outgoing.length > 0}
+			<div class="rounded-lg bg-gray-900 w-full py-2">
+				{#each requestsSorted.outgoing as r}
+					<div class="px-4 py-2 flex flex-row items-center gap-3">
+						<img
+							src={r.recipient.profile_image || "/icons/generic_user.svg"}
+							alt="Profile"
+							class="w-6 h-6 rounded-full bg-gray-800" />
+						<a href="/user/{r.recipient.id}" class="grow">
+							<p class="text-md">{r.recipient.profile_name}</p>
+						</a>
+						<button class="opacity-60" on:click={() => deleteRequest(r)}>Cancel</button>
+					</div>
+				{/each}
+			</div>
+		{:else}
+			<p class="text-center">No outgoing friend requests.</p>
+		{/if}
 		<p class="text-xl">Incoming</p>
 		<div class="w-full">
-			{#each requestsSorted.incoming as r}
-				<IncomingRequest request={r} />
-			{/each}
+			{#if requestsSorted.incoming.length > 0}
+				{#each requestsSorted.incoming as r}
+					<IncomingRequest request={r} />
+				{/each}
+			{:else}
+				<p class="text-center">Not incoming friend requests.</p>
+			{/if}
 		</div>
 	{/if}
 </div>
