@@ -5,6 +5,7 @@
 	import { querySongsLiked } from "$lib/spotify";
 	import PostFeed from "$components/post/PostFeed.svelte";
 	import InfiniteScroll from "svelte-infinite-scroll";
+	import { afterUpdate, beforeUpdate } from "svelte";
 
 	createGraphClient();
 	const client = getContextClient();
@@ -63,31 +64,31 @@
 	$: $postsPage,
 		(() => {
 			if ($postsPage.data) {
-				console.log("updating");
 				posts = [...posts, ...$postsPage.data.allPostsPaginated.data];
 			}
 		})();
 
 	function loadNextPostsPage() {
-		paginationCursor = $postsPage.data.allPostsPaginated.after;
+		if ($postsPage.data.allPostsPaginated.after)
+			paginationCursor = $postsPage.data.allPostsPaginated.after;
 	}
 
 	let likedmap = new Map();
 	function updateLikedMap() {
 		if (posts.length == 0) return;
 		querySongsLiked(posts.map((post: { song: { id: any } }) => post.song.id)).then(
-			(map) => (likedmap = new Map(...likedmap, ...map))
+			(map) => (likedmap = new Map([...likedmap, ...map]))
 		);
 	}
 	$: $postsPage, updateLikedMap();
 </script>
 
 <div class="feed p-2 h-full pb-[4.5rem] overflow-y-auto">
-	{#if $postsPage.fetching}
+	{#if posts.length == 0 && $postsPage.fetching}
 		<div class="flex h-full w-full items-center justify-center p-8">
 			<SyncLoader color="#ffffff" />
 		</div>
-	{:else if $postsPage.error}
+	{:else if posts.length == 0 && $postsPage.error}
 		<p>Oh no... {$postsPage.error.message}</p>
 	{:else}
 		{#each posts as post}
