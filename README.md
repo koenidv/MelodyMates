@@ -1,38 +1,24 @@
-# create-svelte
+# MelodyMates
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+**Share music with your mates**
 
-## Creating a project
+This repository contains the [database configuration](https://github.com/koenidv/MelodyMates/tree/main/.fauna) and a PWA test client for MelodyMates deployed at [MelodyMates.app](https://melodymates.app).
 
-If you're seeing this, you've probably already done this step. Congrats!
+MelodyMates is a social network for close friends who want to share new songs they've discovered.
+Users can post the song they're currently listening to or search for specific titles.
+They can react to their friend's posts and reply by text or songs. MelodyMates is made for young music lovers.
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+### Running the PWA Test Client
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+1. Install dependencies using `npm i`
+2. Run and open the dev server using `npm run dev --open`
 
-## Developing
+### Deploying the PWA Test Client
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+This client is continuously deployed on Netlify on pushes to main.  
+If you still want to create a production version of the client, use `npm run build` and preview using `npm run preview`
 
-```bash
-npm run dev
+### Database Configuration
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+The database is currently not managed as IaC, meaning it has to be set up manually.  
+The [.fauna directory](https://github.com/koenidv/MelodyMates/tree/main/.fauna) includes a GraphQL schema including relationship indexes, as well as generated indexes, role definitions and user defined functions.
