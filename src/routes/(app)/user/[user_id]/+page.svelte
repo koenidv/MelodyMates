@@ -7,6 +7,7 @@
 	import PostSmall from "$components/post/PostSmall.svelte";
 	import CloseButton from "$components/CloseButton.svelte";
 	import { querySongsLiked } from "$lib/spotify.js";
+	import { identity } from "$lib/store";
 
 	export let data;
 
@@ -90,32 +91,34 @@
 			{$user.data.userById.profile_name}
 		</h1>
 		<!-- Follow button -->
-		{#if $user.data.followState[0] == "request_incoming"}
-			<IncomingRequest
-				request={{
-					_id: $user.data.followState[1],
-					from: {
-						id: $user.data.userById.id,
-						profile_name: $user.data.userById.profile_name,
-						profile_image: $user.data.userById.profile_image
-					}
-				}} />
-		{:else}
-			<button
-				class="{$user.data.followState[0] == 'none'
-					? 'bg-spotify'
-					: 'bg-gray-800'} h-10 px-2 rounded-xl flex flex-row gap-2 justify-center items-center transition-colors duration-300 min-w-[12rem]"
-				on:click={() =>
-					handleFollowButtonClicked(
-						$user.data.followState[0],
-						$user.data.followState[1] || undefined
-					)}>
-				{$user.data.followState[0] == "follows"
-					? "Friends"
-					: $user.data.followState[0] == "request_outgoing"
-					? "Cancel request"
-					: "Add friend"}
-			</button>
+		{#if $user.data.userById.id != $identity.user.id}
+			{#if $user.data.followState[0] == "request_incoming"}
+				<IncomingRequest
+					request={{
+						_id: $user.data.followState[1],
+						from: {
+							id: $user.data.userById.id,
+							profile_name: $user.data.userById.profile_name,
+							profile_image: $user.data.userById.profile_image
+						}
+					}} />
+			{:else}
+				<button
+					class="{$user.data.followState[0] == 'none'
+						? 'bg-spotify'
+						: 'bg-gray-800'} h-10 px-2 rounded-xl flex flex-row gap-2 justify-center items-center transition-colors duration-300 min-w-[12rem]"
+					on:click={() =>
+						handleFollowButtonClicked(
+							$user.data.followState[0],
+							$user.data.followState[1] || undefined
+						)}>
+					{$user.data.followState[0] == "follows"
+						? "Friends"
+						: $user.data.followState[0] == "request_outgoing"
+						? "Cancel request"
+						: "Add friend"}
+				</button>
+			{/if}
 		{/if}
 		<!-- Posts -->
 		<div id="posts" class="feed h-full pb-[4.5rem]">
