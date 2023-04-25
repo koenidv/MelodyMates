@@ -3,7 +3,7 @@
 **Share music with your mates**
 
 [![Test Client](https://img.shields.io/badge/Visit-PWA%20Client-blue)](https://melodymates.app)
-[![Add me on MelodyMates](https://img.shields.io/badge/Add%20me%20on-MelodyMates-purple)]([https://melodymates.app](https://melodymates.app/user/3ukbsbcagr66rfk9yokfd53ak))
+[![Add me on MelodyMates](https://img.shields.io/badge/Add%20me%20on-MelodyMates-purple)](https://melodymates.app/user/3ukbsbcagr66rfk9yokfd53ak)
 [![Test Client](https://img.shields.io/badge/Browse-GraphQL%20Schema-green)](https://app.graphqleditor.com/florians-workspace/melodymates?v=latest&c=off&pane=relation)
 
 This repository contains the [database configuration](https://github.com/koenidv/MelodyMates/tree/main/.fauna) and a PWA test client for MelodyMates deployed at [MelodyMates.app](https://melodymates.app).
