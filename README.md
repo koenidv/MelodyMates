@@ -22,3 +22,12 @@ If you still want to create a production version of the client, use `npm run bui
 
 The database is currently not managed as IaC, meaning it has to be set up manually.  
 The [.fauna directory](https://github.com/koenidv/MelodyMates/tree/main/.fauna) includes a GraphQL schema including relationship indexes, as well as generated indexes, role definitions and user defined functions.
+
+### Project Architecture
+... work in progress
+
+### Data Model
+![Data Model](https://user-images.githubusercontent.com/32238636/234260833-f57e03cb-11a6-4841-bcd5-f1e686b2f7ec.png)
+
+#### [Browse the Data Model Online](https://app.graphqleditor.com/florians-workspace/melodymates?v=latest&c=off&pane=relation)
+[<img src="https://user-images.githubusercontent.com/32238636/234260989-8a196c06-4336-427a-b1e5-8905ad72aaac.png" alt="GraphQL schema" width="300">](https://app.graphqleditor.com/florians-workspace/melodymates?v=latest&c=off&pane=relation)
