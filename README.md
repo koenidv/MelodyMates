@@ -14,6 +14,15 @@ They can react to their friend's posts and reply by text or songs. MelodyMates i
 
 ---
 
+<p float="left">
+  <img src="https://user-images.githubusercontent.com/32238636/234383204-cfd9e5fe-743f-45ee-b054-9dac9ad465cc.png" width="180" />
+  <img src="https://user-images.githubusercontent.com/32238636/234383213-91b8f412-c4a7-45c8-910a-bc2a939c4678.png" width="180" /> 
+  <img src="https://user-images.githubusercontent.com/32238636/234383226-4699cbfa-1de5-4492-977b-520345ba5058.png" width="180" />
+  <img src="https://user-images.githubusercontent.com/32238636/234383242-daef942c-f03a-4a4f-bd77-ea3a1990e80c.png" width="180" />
+</p>
+
+---
+
 ### Running the PWA Test Client
 
 1. Install dependencies using `npm i`
