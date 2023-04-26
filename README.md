@@ -52,7 +52,7 @@ The only function not contained within Fauna or the client is the authentication
 4. The client then uses this token in its request to the Fauna API.
 5. Fauna retrieves our public key from Netlify and validates the JWT. If correct, it uses the token's _sub_ attribute to control which resources can be accessed.
 
-![MelodyMates](https://user-images.githubusercontent.com/32238636/234372177-d8483013-8467-42c6-81a3-15f0575124f9.png)
+![MelodyMates](https://user-images.githubusercontent.com/32238636/234679138-054267b9-162f-4359-8f8a-b34eb024165d.png)
 
 
 ### Data Model
