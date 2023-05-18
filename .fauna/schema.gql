@@ -78,9 +78,18 @@ type Query {
 	allFollowRequests: [FollowRequest!]
 	userById(id: String!): User
 	followState(id: String!): [String!] @resolver(name: "followState")
+	searchUsers(query: String!): [User!] @resolver(name: "searchUsers")
+
 }
 
 type Mutation {
 	createFollowRequest(to: String!): FollowRequest @resolver(name: "createFollowRequest")
 	acceptFollowRequest(ref: String!): PrivateUserData @resolver(name: "acceptFollowRequest")
+	# below is currently just for database generation
+	createUser(id: String!, profile_name: String!, profile_image: String, spotify_url: String!): User @resolver(name: "createUser")
+	sortByScore(inputArray: [String]): [String] @resolver(name: "sortByScore")
+	createPost(song: String!, note: String): Post @resolver(name: "createPost")
+	useOrCreateAlbum(id: String!, name: String!, cover_image: String, theme_color: String, artists: [String!]!): Album @resolver(name: "useOrCreateAlbum")
+	useOrCreateArtist(id: String!, name: String!): Artist @resolver(name: "useOrCreateArtist")
+	useOrCreateSong(song_id: String!, song_name: String!, length: Int!, isrc: String!, preview_url: String, artists: [String!]!, album: String!): Song @resolver(name: "useOrCreateSong")
 }

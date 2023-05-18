@@ -1,0 +1,451 @@
+Do(
+    Update(Function("acceptFollowRequest"),
+    {
+        name: "acceptFollowRequest",
+        role: null,
+        body: Query(
+          Lambda(
+            ["request_ref"],
+            Let(
+              { request: Get(Ref(Collection("FollowRequest"), Var("request_ref"))) },
+              If(
+                Equals(
+                  Select(["data", "recipient"], Var("request")),
+                  Select(["ref"], Get(Match(Index("user_id"), CurrentIdentity())))
+                ),
+                Do(
+                  Delete(Select(["ref"], Var("request"))),
+                  Let(
+                    {
+                      priv_from: Get(
+                        Select(
+                          ["data", "private"],
+                          Get(Select(["data", "from"], Var("request")))
+                        )
+                      )
+                    },
+                    Update(Select(["ref"], Var("priv_from")), {
+                      data: {
+                        follows: Append(
+                          Select(["data", "recipient"], Var("request")),
+                          Select(["data", "follows"], Var("priv_from"))
+                        )
+                      }
+                    })
+                  ),
+                  Let(
+                    {
+                      priv_recipient: Get(
+                        Select(
+                          ["data", "private"],
+                          Get(Select(["data", "recipient"], Var("request")))
+                        )
+                      )
+                    },
+                    Update(Select(["ref"], Var("priv_recipient")), {
+                      data: {
+                        follows: Append(
+                          Select(["data", "from"], Var("request")),
+                          Select(["data", "follows"], Var("priv_recipient"))
+                        )
+                      }
+                    })
+                  )
+                ),
+                Abort("Follow request not found")
+              )
+            )
+          )
+        )
+      } 
+    ),
+    Update(Function("allPostsPaginated"),
+        {
+            name: "allPostsPaginated",
+            role: null,
+            body: Query(
+                Lambda(
+                ["size", "after", "before"],
+                Let(
+                    {
+                    match: Match(Index("posts_by_date")),
+                    page: If(
+                        Equals(Var("before"), null),
+                        If(
+                        Equals(Var("after"), null),
+                        Paginate(Var("match"), { size: Var("size") }),
+                        Paginate(Var("match"), { after: Var("after"), size: Var("size") })
+                        ),
+                        Paginate(Var("match"), { before: Var("before"), size: Var("size") })
+                    )
+                    },
+                    Map(Var("page"), Lambda("values", Get(Select(1, Var("values")))))
+                )
+                )
+            )
+        }
+    ),
+    Update(Function("createFollowRequest"),
+    {
+        name: "createFollowRequest",
+        role: null,
+        body: Query(
+            Lambda(
+            ["to_id"],
+            Create(Collection("FollowRequest"), {
+                data: {
+                from: Select("ref", Get(Match(Index("user_id"), CurrentIdentity()))),
+                recipient: Select("ref", Get(Match(Index("user_id"), Var("to_id"))))
+                }
+            })
+            )
+        )
+    }
+    ),
+    Update(Function("createPost"),
+    {
+        name: "createPost",
+        role: Role("useOrCreate_Functions"),
+        body: Query(
+            Lambda(
+            ["song", "note"],
+            Create(Collection("Post"), {
+                data: {
+                author: Select(
+                    "ref",
+                    Get(Match(Index("user_id"), CurrentIdentity()))
+                ),
+                song: Call(Function("useOrCreateSong"), Var("song")),
+                note: Var("note")
+                }
+            })
+            )
+        )
+    }
+    ),
+    Update(Function("createUser"),
+    {
+        name: "createUser",
+        role: null,
+        body: Query(
+            Lambda(
+            ["id", "profile_name", "profile_image", "spotify_url"],
+            Let(
+                {
+                ref: Select(
+                    "ref",
+                    Create(Collection("User"), {
+                    data: {
+                        id: Var("id"),
+                        profile_name: Var("profile_name"),
+                        profile_image: Var("profile_image"),
+                        spotify_url: Var("spotify_url")
+                    }
+                    })
+                )
+                },
+                Let(
+                {
+                    priv: Create(Collection("PrivateUserData"), {
+                    data: { user: Var("ref"), follows: [] }
+                    })
+                },
+                Update(Var("ref"), { data: { private: Var("priv") } })
+                )
+            )
+            )
+        )
+    }
+    ),
+    Update(Function("followState"),
+    {
+        name: "followState",
+        role: null,
+        body: Query(
+            Lambda(
+            ["follows_id"],
+            Let(
+                {
+                otherref: Select(
+                    "ref",
+                    Get(Match(Index("user_id"), Var("follows_id")))
+                ),
+                selfdata: Get(Match(Index("user_id"), CurrentIdentity()))
+                },
+                If(
+                ContainsValue(
+                    Var("otherref"),
+                    Select(
+                    ["data", "follows"],
+                    Get(Select(["data", "private"], Var("selfdata")))
+                    )
+                ),
+                ["follows"],
+                If(
+                    Exists(
+                    Match(Index("unique_followrequest"), [
+                        Select("ref", Var("selfdata")),
+                        Var("otherref")
+                    ])
+                    ),
+                    [
+                    "request_outgoing",
+                    Select(
+                        ["ref", "id"],
+                        Get(
+                        Match(Index("unique_followrequest"), [
+                            Select("ref", Var("selfdata")),
+                            Var("otherref")
+                        ])
+                        )
+                    )
+                    ],
+                    If(
+                    Exists(
+                        Match(Index("unique_followrequest"), [
+                        Var("otherref"),
+                        Select("ref", Var("selfdata"))
+                        ])
+                    ),
+                    [
+                        "request_incoming",
+                        Select(
+                        ["ref", "id"],
+                        Get(
+                            Match(Index("unique_followrequest"), [
+                            Var("otherref"),
+                            Select("ref", Var("selfdata"))
+                            ])
+                        )
+                        )
+                    ],
+                    ["none"]
+                    )
+                )
+                )
+            )
+            )
+        )
+    }
+    ),
+    Update(Function("searchUsers"),
+    {
+        name: "searchUsers",
+        role: null,
+        body: Query(
+            Lambda(
+            ["query"],
+            If(
+                GTE(Length(Var("query")), 3),
+                Call(Function("sortByScore"), 
+                Let(
+                    { queryGrams: NGram(LowerCase(Var("query")), 3, 3) },
+                    Map(
+                    Paginate(
+                        Union(
+                        Map(
+                            Var("queryGrams"),
+                            Lambda("ngram", Match(Index("user_name_ngrams"), Var("ngram")))
+                        )
+                        ),
+                        { size: 12 }
+                    ),
+                    Lambda(
+                        "ref",
+                        Let(
+                        { 
+                            data: Get(Var("ref")),
+                            nameGrams: NGram(LowerCase(Select(["data", "profile_name"], Var("data"))), 3, 3),
+                            gramsDelta: Add(Abs(Subtract(Count(Var("nameGrams")), Count(Var("queryGrams")))), 1),
+                            gramMatches: Count(Intersection(Var("queryGrams"), Var("nameGrams")))
+                        },
+                        {
+                            score: Round(Divide(Multiply(Var("gramMatches"), 100), (Var("gramsDelta")))),
+                            data: Var("data")
+                        }
+                        )
+                    )
+                    )
+                )
+                ),
+                { data: [[]] }
+            )
+            )
+        )
+    }
+    ),
+    Update(Function("sortByScore"), {
+        name: "sortByScore",
+        role: null,
+        body: Query(
+            Lambda(
+            ["inputArray"],
+            Reduce(
+                Lambda(
+                ["result", "item"],
+                Let(
+                    {
+                    length: Count(Var("result")),
+                    index: If(
+                        Equals(0, Var("length")),
+                        0,
+                        Select(
+                        1,
+                        Select(
+                            0,
+                            Filter(
+                            Reduce(
+                                Lambda(
+                                ["acc", "val"],
+                                Append([[Var("val"), Count(Var("acc"))]], Var("acc"))
+                                ),
+                                [],
+                                Var("result")
+                            ),
+                            Lambda(
+                                ["nextItem", "index"],
+                                LT(
+                                Select("score", Var("nextItem")),
+                                Select("score", Var("item"))
+                                )
+                            )
+                            ),
+                            null
+                        ),
+                        Var("length")
+                        )
+                    )
+                    },
+                    Let(
+                    { arr: Var("result"), index: Var("index"), item: Var("item") },
+                    If(
+                        Equals(-1, Var("index")),
+                        Append([Var("item")], Var("arr")),
+                        Let(
+                        {
+                            start: Take(Var("index"), Var("arr")),
+                            end: Drop(Var("index"), Var("arr"))
+                        },
+                        Prepend(Prepend(Var("start"), [Var("item")]), Var("end"))
+                        )
+                    )
+                    )
+                )
+                ),
+                [],
+                Var("inputArray")
+            )
+            )
+        )
+    }),
+    Update(Function("useOrCreateAlbum"), {
+        name: "useOrCreateAlbum",
+        role: Role("useOrCreate_Functions"),
+        body: Query(
+            Lambda(
+            ["id", "name", "cover_image", "theme_color", "artists"],
+            Let(
+                { album_ref: Match(Index("album_id"), Var("id")) },
+                If(
+                Exists(Var("album_ref")),
+                Select("ref", Get(Var("album_ref"))),
+                Select(
+                    "ref",
+                    Create(Collection("Album"), {
+                    data: {
+                        id: Var("id"),
+                        name: Var("name"),
+                        cover_image: Var("cover_image"),
+                        theme_color: Var("theme_color"),
+                        artists: Map(
+                        Var("artists"),
+                        Lambda(
+                            "artist",
+                            Call(Function("useOrCreateArtist"), Var("artist"))
+                        )
+                        ),
+                        original_creator_ref: CurrentIdentity()
+                    }
+                    })
+                )
+                )
+            )
+            )
+        )
+    }),
+    Update(Function("useOrCreateArtist"), {
+        name: "useOrCreateArtist",
+        role: Role("useOrCreate_Functions"),
+        body: Query(
+            Lambda(
+            ["id", "name"],
+            Let(
+                { artist_ref: Match(Index("artist_id"), Var("id")) },
+                If(
+                Exists(Var("artist_ref")),
+                Select("ref", Get(Var("artist_ref"))),
+                Select(
+                    "ref",
+                    Create(Collection("Artist"), {
+                    data: {
+                        id: Var("id"),
+                        name: Var("name"),
+                        original_creator_ref: CurrentIdentity()
+                    }
+                    })
+                )
+                )
+            )
+            )
+        )
+    }),
+    Update(Function("useOrCreateSong"), {
+        name: "useOrCreateSong",
+        role: Role("useOrCreate_Functions"),
+        body: Query(
+            Lambda(
+            [
+                "song_id",
+                "song_name",
+                "length",
+                "isrc",
+                "preview_url",
+                "artists",
+                "album"
+            ],
+            Let(
+                { song_ref: Match(Index("song_id"), Var("song_id")) },
+                If(
+                Exists(Var("song_ref")),
+                Select("ref", Get(Var("song_ref"))),
+                Select(
+                    "ref",
+                    Create(Collection("Song"), {
+                    data: {
+                        id: Var("song_id"),
+                        name: Var("song_name"),
+                        length_ms: Var("length"),
+                        isrc: Var("isrc"),
+                        preview_url: Var("preview_url"),
+                        artists: Map(
+                        Var("artists"),
+                        Lambda(
+                            "artist",
+                            Call(Function("useOrCreateArtist"), Var("artist"))
+                        )
+                        ),
+                        primary_artist: Call(
+                        Function("useOrCreateArtist"),
+                        Select(0, Var("artists"))
+                        ),
+                        album: Call(Function("useOrCreateAlbum"), Var("album")),
+                        original_creator_ref: CurrentIdentity()
+                    }
+                    })
+                )
+                )
+            )
+            )
+        )
+    })
+)
