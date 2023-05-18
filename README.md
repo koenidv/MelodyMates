@@ -3,7 +3,7 @@
 **Share music with your mates**
 
 [![Test Client](https://img.shields.io/badge/Visit-PWA%20Client-blue)](https://melodymates.app)
-[![Add me on MelodyMates](https://img.shields.io/badge/Add%20me%20on-MelodyMates-purple)]([https://melodymates.app](https://melodymates.app/user/3ukbsbcagr66rfk9yokfd53ak))
+[![Add me on MelodyMates](https://img.shields.io/badge/Add%20me%20on-MelodyMates-purple)](https://melodymates.app/user/3ukbsbcagr66rfk9yokfd53ak)
 [![Test Client](https://img.shields.io/badge/Browse-GraphQL%20Schema-green)](https://app.graphqleditor.com/florians-workspace/melodymates?v=latest&c=off&pane=relation)
 
 This repository contains the [database configuration](https://github.com/koenidv/MelodyMates/tree/main/.fauna) and a PWA test client for MelodyMates deployed at [MelodyMates.app](https://melodymates.app).
@@ -11,6 +11,15 @@ This repository contains the [database configuration](https://github.com/koenidv
 MelodyMates is a social network for close friends who want to share new songs they've discovered.
 Users can post the song they're currently listening to or search for specific titles.
 They can react to their friend's posts and reply by text or songs. MelodyMates is made for young music lovers.
+
+---
+
+<p float="left">
+  <img src="https://user-images.githubusercontent.com/32238636/234383204-cfd9e5fe-743f-45ee-b054-9dac9ad465cc.png" width="180" />
+  <img src="https://user-images.githubusercontent.com/32238636/234383213-91b8f412-c4a7-45c8-910a-bc2a939c4678.png" width="180" /> 
+  <img src="https://user-images.githubusercontent.com/32238636/234383226-4699cbfa-1de5-4492-977b-520345ba5058.png" width="180" />
+  <img src="https://user-images.githubusercontent.com/32238636/234383242-daef942c-f03a-4a4f-bd77-ea3a1990e80c.png" width="180" />
+</p>
 
 ---
 
@@ -43,7 +52,7 @@ The only function not contained within Fauna or the client is the authentication
 4. The client then uses this token in its request to the Fauna API.
 5. Fauna retrieves our public key from Netlify and validates the JWT. If correct, it uses the token's _sub_ attribute to control which resources can be accessed.
 
-![MelodyMates](https://user-images.githubusercontent.com/32238636/234372177-d8483013-8467-42c6-81a3-15f0575124f9.png)
+![MelodyMates](https://user-images.githubusercontent.com/32238636/234679138-054267b9-162f-4359-8f8a-b34eb024165d.png)
 
 
 ### Data Model
